@@ -9,12 +9,18 @@ import (
 type Board [6][7]uint8
 
 func BoardFromString(input string) Board {
+const FirstPlayerChar string = "x"
+const SecondPlayerChar string = "o"
 	lines := strings.Split(input, "\n")
 	board := Board{}
 	for lineIndex, line := range lines {
 		for charIndex, char := range line {
-			valeur, _ := strconv.Atoi(string(char))
-			board[lineIndex][charIndex] = uint8(valeur)
+			switch string(char) {
+			case FirstPlayerChar:
+				board[lineIndex][charIndex] = 1
+			case SecondPlayerChar:
+				board[lineIndex][charIndex] = 2
+			}
 		}
 	}
 	return board
