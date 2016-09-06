@@ -1,17 +1,35 @@
 package connectfour
 
 import (
+	"fmt"
 	"testing"
 )
 
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+
 func TestItPrintsTheRightBoardBack(t *testing.T) {
-	boardInput := "0000000\n0000200\n0010201\n0011202\n0112121\n1211212"
+	boardInput :=
+		`0000000
+0000200
+0010201
+0011202
+0112121
+1211212`
 
 	board := BoardFromString(boardInput)
 
-	boardOutput := BoardToString(board)
+	fmt.Println(BoardToString(board))
 
-	if boardInput != boardOutput {
-		t.Error("Expected board output to be the same as input")
-	}
+	// Output:
+	// 0000000
+	// 0000200
+	// 0010201
+	// 0011202
+	// 0112121
+	// 1211212
+}
 }
