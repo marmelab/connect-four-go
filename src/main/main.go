@@ -20,10 +20,10 @@ func main() {
 	flag.Parse()
 
 	absoluteFilePath, _ := filepath.Abs(filePath)
-	dat, err := ioutil.ReadFile(absoluteFilePath)
-	check(err)
+	fileData, error := ioutil.ReadFile(absoluteFilePath)
+	check(error)
 
-	board := connectfour.BoardFromString(string(dat))
+	board := connectfour.BoardFromString(string(fileData))
 
 	fmt.Println(connectfour.BoardToString(board))
 }
