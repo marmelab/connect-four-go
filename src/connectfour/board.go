@@ -153,6 +153,20 @@ func getOpponent(currentPlayer int) int {
 
 func bestMove(board Board, player, depth int) (column, score int) {
 
+func guessNextBoards(boards []Board, player int) []Board {
+	nextBoards := make([]Board, 0)
+
+	for _, board := range boards {
+		for i := 0; i < boardWidth; i++ {
+			nextBoard, err := board.AddDisc(i, player)
+
+			if err == nil {
+				nextBoards = append(nextBoards, nextBoard)
+			}
+		}
+	}
+	return nextBoards
+}
 	if depth == 0 {
 		// compute column score
 	}
