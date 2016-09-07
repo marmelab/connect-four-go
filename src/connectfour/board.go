@@ -74,16 +74,72 @@ func (board Board) score(player uint8) int {
 	return playerFourAligned*MaxInt + playerThreeAligned*100 + playerTwoAligned
 }
 
-func (board Board) numberOfAlignedDiscs(player uint8) (fourAligned, threeAligned, twoAligned int) {
-	// convolution algorithm
+func (board Board) numberOfAlignedDiscs(player int, chunkSize int) int {
+	count := 0
 
-	// vertical lines
-	for i := 0; i < boardWidth; i++ {
-		for j := 0; j < boardHeight-4; j++ {
-			// part := board[j : j+4][i]
+	for _, chunk := range board.getAllChunks(chunkSize) {
+		if areConsecutives(chunk, player) {
+			count++
 		}
 	}
-	return
+
+	return count
+}
+
+func areConsecutives(cells []int, player int) bool {
+	for i := 0; i < len(cells)-1; i++ {
+		if cells[i] != cells[i+1] || cells[i] != player {
+			return false
+		}
+	}
+	return true
+}
+
+func (board Board) getAllChunks(chunkSize int) [][]int {
+	chunks := [][]int{}
+
+	// horizontal
+	for x := 0; x < boardHeight; x++ {
+		line := board[x]
+		for y := 0; y < boardWidth-chunkSize; y++ {
+			chunks = append(chunks, line[y:y+chunkSize])
+		}
+	}
+
+	//vertical
+	for y := 0; y < boardWidth; y++ {
+		for x := 0; x < boardHeight-chunkSize+1; x++ {
+			part := make([]int, chunkSize)
+			for z := 0; z < chunkSize; z++ {
+				part[z] = board[x+z][y]
+			}
+			chunks = append(chunks, part)
+		}
+	}
+
+	// diagonals /
+	for y := 0; y < boardWidth-chunkSize+1; y++ {
+		for x := chunkSize - 1; x < boardHeight; x++ {
+			part := make([]int, chunkSize)
+			for z := 0; z < chunkSize; z++ {
+				part[z] = board[x-z][y+z]
+			}
+			chunks = append(chunks, part)
+		}
+	}
+
+	// diagonals \
+	for y := chunkSize - 1; y < boardWidth; y++ {
+		for x := chunkSize - 1; x < boardHeight; x++ {
+			part := make([]int, chunkSize)
+			for z := 0; z < chunkSize; z++ {
+				part[z] = board[x-z][y-z]
+			}
+			chunks = append(chunks, part)
+		}
+	}
+
+	return chunks
 }
 
 func getOpponent(currentPlayer uint8) uint8 {
