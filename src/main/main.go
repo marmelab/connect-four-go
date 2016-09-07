@@ -26,5 +26,5 @@ func main() {
 
 	board := connectfour.New(string(fileData))
 
-	fmt.Println(renderer.ToString(board))
+	fmt.Println(renderer.Render(board))
 }

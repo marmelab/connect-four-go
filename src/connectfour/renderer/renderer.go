@@ -5,7 +5,7 @@ import (
 	"connectfour"
 )
 
-func ToString(board connectfour.Board) string {
+func Render(board connectfour.Board) string {
 	var buffer bytes.Buffer
 	for _, line := range board {
 		for _, cell := range line {
