@@ -16,6 +16,11 @@ const MinScore int = math.MinInt32
 
 type Board [boardHeight][boardWidth]int
 
+type PossibleBoard struct {
+	currentBoard   Board // currentBoard
+	currentScoring int   //currentScoring
+}
+
 func New(input string) Board {
 	lines := strings.Split(input, "\n")
 	board := Board{}
