@@ -16,5 +16,3 @@ ENV GOROOT /usr/local/src/go
 ENV PATH ${PATH}:${GOROOT}/bin
 
 WORKDIR /srv/
-
-ENTRYPOINT ["go"]
