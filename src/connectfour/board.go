@@ -20,16 +20,26 @@ type Board [boardHeight][boardWidth]uint8
 func New(input string) Board {
 	lines := strings.Split(input, "\n")
 	board := Board{}
+
 	for lineIndex, line := range lines {
-		for charIndex, char := range line {
-			switch string(char) {
+		for i := 0; i < boardWidth; i++ {
+			var char string
+			if i < len(line) {
+				char = string(line[i])
+			} else {
+				char = ""
+			}
+			switch char {
 			case FirstPlayerChar:
-				board[lineIndex][charIndex] = 1
+				board[lineIndex][i] = 1
 			case SecondPlayerChar:
-				board[lineIndex][charIndex] = 2
+				board[lineIndex][i] = 2
+			default:
+				board[lineIndex][i] = 0
 			}
 		}
 	}
+
 	return board
 }
 
