@@ -25,4 +25,5 @@ run:
 # Tests ========================================================================
 
 test: ## Run all tests
-	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go test && cd renderer && go test"
+	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go test"
+	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour/renderer && go test"
