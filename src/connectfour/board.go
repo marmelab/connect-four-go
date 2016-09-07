@@ -15,7 +15,7 @@ const MaxUint = ^uint(0)
 const MaxInt = int(MaxUint >> 1)
 const MinInt = -MaxInt - 1
 
-type Board [boardHeight][boardWidth]uint8
+type Board [boardHeight][boardWidth]int
 
 func New(input string) Board {
 	lines := strings.Split(input, "\n")
@@ -43,7 +43,7 @@ func New(input string) Board {
 	return board
 }
 
-func (board Board) AddDisc(column, player uint8) (Board, error) {
+func (board Board) AddDisc(column, player int) (Board, error) {
 	dropped := false
 
 	for i := boardHeight - 1; i >= 0; i-- {
@@ -61,7 +61,7 @@ func (board Board) AddDisc(column, player uint8) (Board, error) {
 	return board, nil
 }
 
-func (board Board) score(player uint8) int {
+func (board Board) score(player int) int {
 
 	playerFourAligned, playerThreeAligned, playerTwoAligned := board.numberOfAlignedDiscs(player)
 
@@ -142,7 +142,7 @@ func (board Board) getAllChunks(chunkSize int) [][]int {
 	return chunks
 }
 
-func getOpponent(currentPlayer uint8) uint8 {
+func getOpponent(currentPlayer int) int {
 	if currentPlayer == 1 {
 		return 2
 	}
