@@ -74,13 +74,13 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	possibleBoards := make([]PossibleBoard, 0)
-	possibleBoards = append(possibleBoards, PossibleBoard{
+	scoredBoards := make([]ScoredBoard, 0)
+	scoredBoards = append(scoredBoards, ScoredBoard{
 		currentBoard: board,
 	})
 
-	nextPossibleBoards := guessNextBoards(possibleBoards, 1, 1)
-	fmt.Println(nextPossibleBoards)
+	nextScoredBoards := guessNextBoards(scoredBoards, 1, 1)
+	fmt.Println(nextScoredBoards)
 	firstBoard := Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
@@ -90,7 +90,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextPossibleBoards[0].currentBoard != firstBoard {
+	if nextScoredBoards[0].currentBoard != firstBoard {
 		t.Error("Expected boards to contain next board playing with first column")
 	}
 
@@ -103,11 +103,11 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextPossibleBoards[1].currentBoard != secondBoard {
+	if nextScoredBoards[1].currentBoard != secondBoard {
 		t.Error("Expected boards to contain next board playing with second column")
 	}
 
-	if len(nextPossibleBoards) > 6 {
+	if len(nextScoredBoards) > 6 {
 		t.Error("Expected next boards not to contain any board on column two")
 	}
 
@@ -120,7 +120,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextPossibleBoards[2].currentBoard != thirdBoard {
+	if nextScoredBoards[2].currentBoard != thirdBoard {
 		t.Error("Expected boards to contain next board playing with fourth column")
 	}
 
@@ -133,7 +133,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextPossibleBoards[3].currentBoard != fourthBoard {
+	if nextScoredBoards[3].currentBoard != fourthBoard {
 		t.Error("Expected boards to contain next board playing with fifth column")
 	}
 
@@ -146,7 +146,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextPossibleBoards[4].currentBoard != fifthBoard {
+	if nextScoredBoards[4].currentBoard != fifthBoard {
 		t.Error("Expected boards to contain next board playing with sixth column")
 	}
 
@@ -159,7 +159,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 1},
 	}
 
-	if nextPossibleBoards[5].currentBoard != sixthBoard {
+	if nextScoredBoards[5].currentBoard != sixthBoard {
 		t.Error("Expected boards to contain next board playing with seventh column")
 	}
 }

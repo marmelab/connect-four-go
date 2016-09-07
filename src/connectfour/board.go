@@ -2,6 +2,7 @@ package connectfour
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"strings"
 )
@@ -16,7 +17,7 @@ const MinScore int = math.MinInt32
 
 type Board [boardHeight][boardWidth]int
 
-type PossibleBoard struct {
+type ScoredBoard struct {
 	currentBoard   Board // currentBoard
 	currentScoring int   //currentScoring
 }
@@ -155,71 +156,104 @@ func getOpponent(currentPlayer int) int {
 	return 1
 }
 
-func bestMove(board Board, player, depth int) (column, score int) {
+func (board Board) NextBestMove(player int) int {
+	currentPlayer := player
 
-func guessNextBoards(boards []Board, player int) []Board {
-	nextBoards := make([]Board, 0)
-
-	for _, board := range boards {
-		for i := 0; i < boardWidth; i++ {
-			nextBoard, err := board.AddDisc(i, player)
-
-			if err == nil {
-				nextBoards = append(nextBoards, nextBoard)
-			}
-		}
-	}
-	return nextBoards
-}
-	if depth == 0 {
-		// compute column score
-	}
-	score = 0
-	depth--
-	// drop a disc on every column and compute possibility
-	for i := 0; i <= boardWidth; i++ {
-		// dropDisc(board, player, i)
-
-		// columnScore := getColumnScore(board, player, depth)
-		// if columnScore > score {
-		// 	score = columnScore
-		// 	column = i
-		// }
-	}
-	return
-
-func guessNextBoardsAggregated(possibleBoards [][]PossibleBoard, currentPlayer, scoringPlayer int) [][]PossibleBoard {
-	var nextPossibleBoardsByColumn [][]PossibleBoard = make([][]PossibleBoard, boardWidth)
+	var scoredBoards [][]ScoredBoard = make([][]ScoredBoard, boardWidth)
 
 	for i := 0; i < boardWidth; i++ {
-		nextPossibleBoardsByColumn[i] = make([]PossibleBoard, 0)
+		scoredBoards[i] = make([]ScoredBoard, 0)
 
-		nextPossibleBoardsOneColumn := guessNextBoards(possibleBoards[i], currentPlayer, scoringPlayer)
+		nextBoard, err := board.AddDisc(i, currentPlayer)
+		if err != nil {
+			continue
+		}
 
-		nextPossibleBoardsByColumn[i] = append(nextPossibleBoardsByColumn[i], nextPossibleBoardsOneColumn...)
+		scoredBoard := ScoredBoard{
+			currentBoard:   nextBoard,
+			currentScoring: nextBoard.score(currentPlayer),
+		}
+
+		scoredBoards[i] = append(scoredBoards[i], scoredBoard)
+	}
+	depth := 1
+	var bestColumn int
+	for depth < 4 {
+		bestScore := MinScore
+
+		for i := 0; i < boardWidth; i++ {
+			score := aggregateScoring(scoredBoards[i])
+
+			if score > bestScore {
+				bestScore = score
+				bestColumn = i
+			}
+		}
+
+		fmt.Println("Depth", depth, "Best Score", bestScore, "Best column", bestColumn)
+
+		currentPlayer = getOpponent(currentPlayer)
+
+		scoredBoards = guessNextBoardsAggregated(scoredBoards, currentPlayer, player)
 	}
 
-	return nextPossibleBoardsByColumn
+	return bestColumn
+	//
+	// bestScore := MinScore
+	// var bestColumn int
+	// for i := 0; i <= boardWidth; i++ {
+	// 	score, err := board.scan(i, player, 3)
+	// 	if err != nil {
+	// 		continue
+	// 	}
+	// 	if score > bestScore {
+	// 		bestScore = score
+	// 		bestColumn = i
+	// 	}
+	// }
+	// return bestColumn
 }
 
-func guessNextBoards(possibleBoards []PossibleBoard, currentPlayer, scoringPlayer int) []PossibleBoard {
-	var nextPossibleBoards []PossibleBoard
+func aggregateScoring(scoredBoards []ScoredBoard) int {
+	score := 0
+	for _, scoredBoard := range scoredBoards {
+		score += scoredBoard.currentScoring
+	}
+	return score
+}
 
-	for _, possibleBoard := range possibleBoards {
+func guessNextBoardsAggregated(scoredBoards [][]ScoredBoard, currentPlayer, scoringPlayer int) [][]ScoredBoard {
+	var nextScoredBoardsByColumn [][]ScoredBoard = make([][]ScoredBoard, boardWidth)
+
+	for i := 0; i < boardWidth; i++ {
+		nextScoredBoardsByColumn[i] = make([]ScoredBoard, 0)
+
+		nextScoredBoardsOneColumn := guessNextBoards(scoredBoards[i], currentPlayer, scoringPlayer)
+
+		nextScoredBoardsByColumn[i] = append(nextScoredBoardsByColumn[i], nextScoredBoardsOneColumn...)
+	}
+
+	return nextScoredBoardsByColumn
+}
+
+func guessNextBoards(scoredBoards []ScoredBoard, currentPlayer, scoringPlayer int) []ScoredBoard {
+	var nextScoredBoards []ScoredBoard
+
+	for _, scoredBoard := range scoredBoards {
 		for i := 0; i < boardWidth; i++ {
-			nextBoard, err := possibleBoard.currentBoard.AddDisc(i, currentPlayer)
+			nextBoard, err := scoredBoard.currentBoard.AddDisc(i, currentPlayer)
 			if err != nil {
 				continue
 			}
 
-			nextPossibleBoard := PossibleBoard{
+			nextScoredBoard := ScoredBoard{
 				currentBoard:   nextBoard,
 				currentScoring: nextBoard.score(scoringPlayer),
 			}
 
-			nextPossibleBoards = append(nextPossibleBoards, nextPossibleBoard)
+			nextScoredBoards = append(nextScoredBoards, nextScoredBoard)
 		}
 	}
 
-	return nextPossibleBoards
+	return nextScoredBoards
 }
