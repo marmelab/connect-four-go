@@ -63,15 +63,17 @@ func (board Board) AddDisc(column, player int) (Board, error) {
 
 func (board Board) score(player int) int {
 
-	playerFourAligned, playerThreeAligned, playerTwoAligned := board.numberOfAlignedDiscs(player)
+	playerFourAligned := board.numberOfAlignedDiscs(player, 4)
+	playerThreeAligned := board.numberOfAlignedDiscs(player, 3)
+	playerTwoAligned := board.numberOfAlignedDiscs(player, 2)
 
 	opponent := getOpponent(player)
-	_, _, opponentFourAligned := board.numberOfAlignedDiscs(opponent)
+	opponentFourAligned := board.numberOfAlignedDiscs(opponent, 4)
 
 	if opponentFourAligned > 0 {
-		return MinInt
+		return -10000
 	}
-	return playerFourAligned*MaxInt + playerThreeAligned*100 + playerTwoAligned
+	return playerFourAligned*10000 + playerThreeAligned*100 + playerTwoAligned
 }
 
 func (board Board) numberOfAlignedDiscs(player int, chunkSize int) int {

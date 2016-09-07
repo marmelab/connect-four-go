@@ -44,3 +44,22 @@ func TestNumberOfAlignedDiscs(t *testing.T) {
 		t.Error("Expected 5, got ", numberOfAlignedDiscs)
 	}
 }
+
+func TestScoreSecondPlayerShouldBeHigher(t *testing.T) {
+	board := Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 2, 0, 0, 0, 0},
+		{0, 1, 1, 2, 1, 0, 0},
+		{1, 1, 1, 2, 2, 2, 0},
+	}
+
+	firstPlayerScore := board.score(1)
+	secondPlayerScore := board.score(2)
+
+	if firstPlayerScore > secondPlayerScore {
+		t.Error("Expected second player score to be higher than first player score")
+	}
+
+}
