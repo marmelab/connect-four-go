@@ -1,7 +1,7 @@
 package connectfour
 
 import (
-	"github.com/forestgiant/sliceutil"
+	"fmt"
 	"testing"
 )
 
@@ -65,20 +65,22 @@ func TestScoreSecondPlayerShouldBeHigher(t *testing.T) {
 }
 
 func TestGuessNextBoards(t *testing.T) {
-
-	boards := make([]Board, 0)
-
-	boards = append(boards, Board{
+	board := Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 1, 1, 2, 1, 0, 0},
 		{1, 1, 1, 2, 2, 2, 0},
+	}
+
+	possibleBoards := make([]PossibleBoard, 0)
+	possibleBoards = append(possibleBoards, PossibleBoard{
+		currentBoard: board,
 	})
 
-	nextBoards := guessNextBoards(boards, 1)
-
+	nextPossibleBoards := guessNextBoards(possibleBoards, 1, 1)
+	fmt.Println(nextPossibleBoards)
 	firstBoard := Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
@@ -88,7 +90,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if !sliceutil.Contains(nextBoards, firstBoard) {
+	if nextPossibleBoards[0].currentBoard != firstBoard {
 		t.Error("Expected boards to contain next board playing with first column")
 	}
 
@@ -101,8 +103,12 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if !sliceutil.Contains(nextBoards, secondBoard) {
+	if nextPossibleBoards[1].currentBoard != secondBoard {
 		t.Error("Expected boards to contain next board playing with second column")
+	}
+
+	if len(nextPossibleBoards) > 6 {
+		t.Error("Expected next boards not to contain any board on column two")
 	}
 
 	thirdBoard := Board{
@@ -114,7 +120,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if !sliceutil.Contains(nextBoards, thirdBoard) {
+	if nextPossibleBoards[2].currentBoard != thirdBoard {
 		t.Error("Expected boards to contain next board playing with fourth column")
 	}
 
@@ -127,7 +133,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if !sliceutil.Contains(nextBoards, fourthBoard) {
+	if nextPossibleBoards[3].currentBoard != fourthBoard {
 		t.Error("Expected boards to contain next board playing with fifth column")
 	}
 
@@ -140,7 +146,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if !sliceutil.Contains(nextBoards, fifthBoard) {
+	if nextPossibleBoards[4].currentBoard != fifthBoard {
 		t.Error("Expected boards to contain next board playing with sixth column")
 	}
 
@@ -153,7 +159,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 1},
 	}
 
-	if !sliceutil.Contains(nextBoards, sixthBoard) {
+	if nextPossibleBoards[5].currentBoard != sixthBoard {
 		t.Error("Expected boards to contain next board playing with seventh column")
 	}
 }

@@ -182,4 +182,39 @@ func guessNextBoards(boards []Board, player int) []Board {
 		// }
 	}
 	return
+
+func guessNextBoardsAggregated(possibleBoards [][]PossibleBoard, currentPlayer, scoringPlayer int) [][]PossibleBoard {
+	var nextPossibleBoardsByColumn [][]PossibleBoard = make([][]PossibleBoard, boardWidth)
+
+	for i := 0; i < boardWidth; i++ {
+		nextPossibleBoardsByColumn[i] = make([]PossibleBoard, 0)
+
+		nextPossibleBoardsOneColumn := guessNextBoards(possibleBoards[i], currentPlayer, scoringPlayer)
+
+		nextPossibleBoardsByColumn[i] = append(nextPossibleBoardsByColumn[i], nextPossibleBoardsOneColumn...)
+	}
+
+	return nextPossibleBoardsByColumn
+}
+
+func guessNextBoards(possibleBoards []PossibleBoard, currentPlayer, scoringPlayer int) []PossibleBoard {
+	var nextPossibleBoards []PossibleBoard
+
+	for _, possibleBoard := range possibleBoards {
+		for i := 0; i < boardWidth; i++ {
+			nextBoard, err := possibleBoard.currentBoard.AddDisc(i, currentPlayer)
+			if err != nil {
+				continue
+			}
+
+			nextPossibleBoard := PossibleBoard{
+				currentBoard:   nextBoard,
+				currentScoring: nextBoard.score(scoringPlayer),
+			}
+
+			nextPossibleBoards = append(nextPossibleBoards, nextPossibleBoard)
+		}
+	}
+
+	return nextPossibleBoards
 }
