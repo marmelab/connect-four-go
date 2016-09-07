@@ -2,6 +2,7 @@ package connectfour
 
 import (
 	"errors"
+	"math"
 	"strings"
 )
 
@@ -11,9 +12,7 @@ const boardHeight int = 6
 const FirstPlayerChar string = "x"
 const SecondPlayerChar string = "o"
 
-const MaxUint = ^uint(0)
-const MaxInt = int(MaxUint >> 1)
-const MinInt = -MaxInt - 1
+const MinScore int = math.MinInt32
 
 type Board [boardHeight][boardWidth]int
 
