@@ -12,17 +12,17 @@ install:
 # Deployment ===================================================================
 
 pkg/darwin_amd64/connectfour.a: src/connectfour/renderer/renderer.go src/connectfour/board.go
-	@docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go install"
+	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go install"
 
 bin/main: src/main/main.go pkg/darwin_amd64/connectfour.a
-	@docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/main && go install"
+	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/main && go install"
 
 # Development ==================================================================
 
 run:
-	@docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bin/main -file=${FILE}
+	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bin/main -file=${FILE}
 
 # Tests ========================================================================
 
 test: ## Run all tests
-	@docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd ./src/connectfour/test && go test"
+	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go test && cd renderer && go test"
