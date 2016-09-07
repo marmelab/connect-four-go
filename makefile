@@ -7,13 +7,10 @@ help:
 # Initialization ===============================================================
 
 # Deployment ===================================================================
-build-lib: ## Build the connectfour lib
+
+build: ## Build all
 	@cd ./src/connectfour && go install
-
-build-main: ## Build the connectfour main executable
 	@cd ./src/main && go install
-
-build: build-lib build-main ## Build all
 
 # Development ==================================================================
 
