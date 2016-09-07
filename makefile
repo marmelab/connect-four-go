@@ -8,10 +8,10 @@ help:
 
 # Deployment ===================================================================
 build-lib: ## Build the connectfour lib
-	@cd ./src/connectfour && go build && go install
+	@cd ./src/connectfour && go install
 
 build-main: ## Build the connectfour main executable
-	@cd ./src/main && go build && go install
+	@cd ./src/main && go install
 
 build: build-lib build-main ## Build all
 
