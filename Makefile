@@ -12,10 +12,10 @@ install:
 # Deployment ===================================================================
 
 pkg/darwin_amd64/connectfour.a: src/connectfour/renderer/renderer.go src/connectfour/board.go
-	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go install"
+	docker run --rm --volume="`pwd`:/srv" -ti --workdir="/srv/src/connectfour" marmelab-go go install
 
 bin/main: src/main/main.go pkg/darwin_amd64/connectfour.a
-	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/main && go install"
+	docker run --rm --volume="`pwd`:/srv" -ti --workdir="/srv/src/main" marmelab-go go install
 
 # Development ==================================================================
 
@@ -25,8 +25,8 @@ run:
 # Tests ========================================================================
 
 test: ## Run all tests
-	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go test"
-	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour/renderer && go test"
+	docker run --rm --volume="`pwd`:/srv" -ti --workdir="/srv/src/connectfour" marmelab-go go test
+	docker run --rm --volume="`pwd`:/srv" -ti --workdir="/srv/src/connectfour/renderer" marmelab-go go test
 
 benchmark: ## Run all the benchmarks
-	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go test -run=XXX -bench=."
+	docker run --rm --volume="`pwd`:/srv" -ti --workdir="/srv/src/connectfour" marmelab-go go test -run=XXX -bench=.
