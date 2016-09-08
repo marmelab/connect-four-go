@@ -75,41 +75,41 @@ func (board Board) getAllChunks(chunkSize int) [][]int {
 	chunks := [][]int{}
 
 	// horizontal
-	for x := 0; x < BoardHeight; x++ {
-		line := board[x]
-		for y := 0; y < BoardWidth-chunkSize; y++ {
-			chunks = append(chunks, line[y:y+chunkSize])
+	for y := 0; y < BoardHeight; y++ {
+		line := board[y]
+		for x := 0; x < BoardWidth-chunkSize; x++ {
+			chunks = append(chunks, line[x:x+chunkSize])
 		}
 	}
 
 	//vertical
-	for y := 0; y < BoardWidth; y++ {
-		for x := 0; x < BoardHeight-chunkSize+1; x++ {
+	for x := 0; x < BoardWidth; x++ {
+		for y := 0; y < BoardHeight-chunkSize+1; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
-				part[z] = board[x+z][y]
+				part[z] = board[y+z][x]
 			}
 			chunks = append(chunks, part)
 		}
 	}
 
 	// diagonals /
-	for y := 0; y < BoardWidth-chunkSize+1; y++ {
-		for x := chunkSize - 1; x < BoardHeight; x++ {
+	for x := 0; x < BoardWidth-chunkSize+1; x++ {
+		for y := chunkSize - 1; y < BoardHeight; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
-				part[z] = board[x-z][y+z]
+				part[z] = board[y-z][x+z]
 			}
 			chunks = append(chunks, part)
 		}
 	}
 
 	// diagonals \
-	for y := chunkSize - 1; y < BoardWidth; y++ {
-		for x := chunkSize - 1; x < BoardHeight; x++ {
+	for x := chunkSize - 1; x < BoardWidth; x++ {
+		for y := chunkSize - 1; y < BoardHeight; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
-				part[z] = board[x-z][y-z]
+				part[z] = board[y-z][x-z]
 			}
 			chunks = append(chunks, part)
 		}
