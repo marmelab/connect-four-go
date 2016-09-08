@@ -3,54 +3,24 @@ package connectfour
 import (
 	"errors"
 	"math"
-	"strings"
 )
 
-const boardWidth int = 7
-const boardHeight int = 6
-
-const FirstPlayerChar string = "x"
-const SecondPlayerChar string = "o"
+const BoardWidth int = 7
+const BoardHeight int = 6
 
 const MinScore int = math.MinInt32
 
-type Board [boardHeight][boardWidth]int
+type Board [BoardHeight][BoardWidth]int
 
 type ScoredBoard struct {
 	currentBoard   Board
 	currentScoring int
 }
 
-func New(input string) Board {
-	lines := strings.Split(input, "\n")
-	board := Board{}
-
-	for lineIndex, line := range lines {
-		for i := 0; i < boardWidth; i++ {
-			var char string
-			if i < len(line) {
-				char = string(line[i])
-			} else {
-				char = ""
-			}
-			switch char {
-			case FirstPlayerChar:
-				board[lineIndex][i] = 1
-			case SecondPlayerChar:
-				board[lineIndex][i] = 2
-			default:
-				board[lineIndex][i] = 0
-			}
-		}
-	}
-
-	return board
-}
-
 func (board Board) AddDisc(column, player int) (Board, error) {
 	dropped := false
 
-	for i := boardHeight - 1; i >= 0; i-- {
+	for i := BoardHeight - 1; i >= 0; i-- {
 		if board[i][column] == 0 {
 			dropped = true
 			board[i][column] = player
@@ -105,16 +75,16 @@ func (board Board) getAllChunks(chunkSize int) [][]int {
 	chunks := [][]int{}
 
 	// horizontal
-	for x := 0; x < boardHeight; x++ {
+	for x := 0; x < BoardHeight; x++ {
 		line := board[x]
-		for y := 0; y < boardWidth-chunkSize; y++ {
+		for y := 0; y < BoardWidth-chunkSize; y++ {
 			chunks = append(chunks, line[y:y+chunkSize])
 		}
 	}
 
 	//vertical
-	for y := 0; y < boardWidth; y++ {
-		for x := 0; x < boardHeight-chunkSize+1; x++ {
+	for y := 0; y < BoardWidth; y++ {
+		for x := 0; x < BoardHeight-chunkSize+1; x++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[x+z][y]
@@ -124,8 +94,8 @@ func (board Board) getAllChunks(chunkSize int) [][]int {
 	}
 
 	// diagonals /
-	for y := 0; y < boardWidth-chunkSize+1; y++ {
-		for x := chunkSize - 1; x < boardHeight; x++ {
+	for y := 0; y < BoardWidth-chunkSize+1; y++ {
+		for x := chunkSize - 1; x < BoardHeight; x++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[x-z][y+z]
@@ -135,8 +105,8 @@ func (board Board) getAllChunks(chunkSize int) [][]int {
 	}
 
 	// diagonals \
-	for y := chunkSize - 1; y < boardWidth; y++ {
-		for x := chunkSize - 1; x < boardHeight; x++ {
+	for y := chunkSize - 1; y < BoardWidth; y++ {
+		for x := chunkSize - 1; x < BoardHeight; x++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[x-z][y-z]
@@ -158,9 +128,9 @@ func getOpponent(currentPlayer int) int {
 func (board Board) NextBestMove(player int) int {
 	currentPlayer := player
 
-	var scoredBoards [][]ScoredBoard = make([][]ScoredBoard, boardWidth)
+	var scoredBoards [][]ScoredBoard = make([][]ScoredBoard, BoardWidth)
 
-	for i := 0; i < boardWidth; i++ {
+	for i := 0; i < BoardWidth; i++ {
 		scoredBoards[i] = make([]ScoredBoard, 0)
 
 		nextBoard, err := board.AddDisc(i, currentPlayer)
@@ -180,7 +150,7 @@ func (board Board) NextBestMove(player int) int {
 	for {
 		bestScore := MinScore
 
-		for i := 0; i < boardWidth; i++ {
+		for i := 0; i < BoardWidth; i++ {
 			score := aggregateScoring(scoredBoards[i])
 
 			if score > bestScore {
@@ -212,9 +182,9 @@ func aggregateScoring(scoredBoards []ScoredBoard) int {
 }
 
 func guessNextBoardsAggregated(scoredBoards [][]ScoredBoard, currentPlayer, scoringPlayer int) [][]ScoredBoard {
-	var nextScoredBoardsByColumn [][]ScoredBoard = make([][]ScoredBoard, boardWidth)
+	var nextScoredBoardsByColumn [][]ScoredBoard = make([][]ScoredBoard, BoardWidth)
 
-	for i := 0; i < boardWidth; i++ {
+	for i := 0; i < BoardWidth; i++ {
 		nextScoredBoardsByColumn[i] = make([]ScoredBoard, 0)
 
 		nextScoredBoardsOneColumn := guessNextBoards(scoredBoards[i], currentPlayer, scoringPlayer)
@@ -229,7 +199,7 @@ func guessNextBoards(scoredBoards []ScoredBoard, currentPlayer, scoringPlayer in
 	var nextScoredBoards []ScoredBoard
 
 	for _, scoredBoard := range scoredBoards {
-		for i := 0; i < boardWidth; i++ {
+		for i := 0; i < BoardWidth; i++ {
 			nextBoard, err := scoredBoard.currentBoard.AddDisc(i, currentPlayer)
 			if err != nil {
 				continue

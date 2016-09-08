@@ -1,16 +1,10 @@
 package renderer
 
 import (
-	"connectfour"
+	"connectfour/parser"
 	"fmt"
 	"testing"
 )
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
 
 func TestItPrintsTheRightBoardBack(t *testing.T) {
 	boardInput :=
@@ -21,9 +15,9 @@ func TestItPrintsTheRightBoardBack(t *testing.T) {
  xxoxox
 xoxxoxo`
 
-	board := connectfour.New(boardInput)
+	board := parser.Parse(boardInput, "x", "o")
 
-	fmt.Println(Render(board))
+	fmt.Println(Render(board, "x", "o"))
 
 	// Output:
 	//
