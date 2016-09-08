@@ -225,8 +225,8 @@ func NextBestMove(board connectfour.Board, player int, results chan Result) {
 	var bestColumn int
 	for {
 		bestScore := MinScore
-		i := 0
-		for ; i < connectfour.BoardWidth; i++ {
+
+		for i := 0; i < connectfour.BoardWidth; i++ {
 			score := aggregateScoring(scoredBoards[i])
 
 			if score > bestScore {
