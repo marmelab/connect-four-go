@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func Parse(input string, firstPlayerChar, secondPlayerChar string) connectfour.Board {
+func Parse(input string, firstPlayerChar, secondPlayerChar, emptyCellChar string) connectfour.Board {
 	lines := strings.Split(input, "\n")
 	board := connectfour.Board{}
 
@@ -15,7 +15,7 @@ func Parse(input string, firstPlayerChar, secondPlayerChar string) connectfour.B
 			if i < len(line) {
 				char = string(line[i])
 			} else {
-				char = ""
+				char = emptyCellChar
 			}
 			switch char {
 			case firstPlayerChar:

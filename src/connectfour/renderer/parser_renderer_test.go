@@ -3,28 +3,26 @@ package renderer
 import (
 	"connectfour/parser"
 	"fmt"
-	"testing"
 )
 
-func TestItPrintsTheRightBoardBack(t *testing.T) {
+func ExampleItPrintsTheRightBoardBack() {
 	boardInput :=
-		`
-    o
-  x o x
-  xxo o
- xxoxox
+		`.......
+....o..
+..x.o.x
+..xxo.o
+.xxoxox
 xoxxoxo`
 
-	board := parser.Parse(boardInput, "x", "o")
+	board := parser.Parse(boardInput, "x", "o", ".")
 
-	fmt.Println(Render(board, "x", "o"))
+	fmt.Println(Render(board, "x", "o", "."))
 
 	// Output:
-	//
-	//     o
-	//   x o x
-	//   xxo o
-	//  xxoxox
+	// .......
+	// ....o..
+	// ..x.o.x
+	// ..xxo.o
+	// .xxoxox
 	// xoxxoxo
-
 }

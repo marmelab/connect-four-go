@@ -25,7 +25,7 @@ func main() {
 	fileData, error := ioutil.ReadFile(absoluteFilePath)
 	check(error)
 
-	board := parser.Parse(string(fileData))
+	board := parser.Parse(string(fileData), "x", "o", " ")
 
-	fmt.Println(renderer.Render(board))
+	fmt.Println(renderer.Render(board, "x", "o", " "))
 }
