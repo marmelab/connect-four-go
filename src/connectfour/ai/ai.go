@@ -19,6 +19,10 @@ type Result struct {
 	Error  error
 }
 
+func hasWon(board connectfour.Board, player int) bool {
+	return numberOfAlignedDiscs(board, player, 4) > 0
+}
+
 func score(board connectfour.Board, player int) int {
 	fourSeriesNumber := numberOfAlignedDiscs(board, player, 4)
 	threeSeriesNumber := numberOfAlignedDiscs(board, player, 3)
@@ -161,6 +165,7 @@ func NextBestMoveInTime(board connectfour.Board, player int, duration time.Durat
 		case finished = <-timeout:
 		case result, channelStillOpen := <-results:
 			if !channelStillOpen {
+				finished = true
 				break
 			}
 			column = result.Column
@@ -194,6 +199,14 @@ func NextBestMove(board connectfour.Board, player int, results chan Result) {
 		nextBoard, err := board.AddDisc(i, currentPlayer)
 		if err != nil {
 			continue
+		}
+
+		if hasWon(nextBoard, player) {
+			results <- Result{
+				Column: i,
+				Error:  nil,
+			}
+			return
 		}
 
 		scoredBoard := ScoredBoard{
