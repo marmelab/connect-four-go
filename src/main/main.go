@@ -1,7 +1,7 @@
 package main
 
 import (
-	"connectfour"
+	"connectfour/parser"
 	"connectfour/renderer"
 	"flag"
 	"fmt"
@@ -24,7 +24,7 @@ func main() {
 	fileData, error := ioutil.ReadFile(absoluteFilePath)
 	check(error)
 
-	board := connectfour.New(string(fileData))
+	board := parser.Parse(string(fileData), "x", "o", " ")
 
-	fmt.Println(renderer.Render(board))
+	fmt.Println(renderer.Render(board, "x", "o", " "))
 }

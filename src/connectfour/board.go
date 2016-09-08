@@ -1,26 +1,28 @@
 package connectfour
 
 import (
-	"strings"
+	"errors"
 )
 
-const FirstPlayerChar string = "x"
-const SecondPlayerChar string = "o"
+const BoardWidth int = 7
+const BoardHeight int = 6
 
-type Board [6][7]uint8
+type Board [BoardHeight][BoardWidth]int
 
-func New(input string) Board {
-	lines := strings.Split(input, "\n")
-	board := Board{}
-	for lineIndex, line := range lines {
-		for charIndex, char := range line {
-			switch string(char) {
-			case FirstPlayerChar:
-				board[lineIndex][charIndex] = 1
-			case SecondPlayerChar:
-				board[lineIndex][charIndex] = 2
-			}
+func (board Board) AddDisc(column, player int) (Board, error) {
+	dropped := false
+
+	for i := BoardHeight - 1; i >= 0; i-- {
+		if board[i][column] == 0 {
+			dropped = true
+			board[i][column] = player
+			break
 		}
 	}
-	return board
+
+	if !dropped {
+		return board, errors.New("Illegal move")
+	}
+
+	return board, nil
 }
