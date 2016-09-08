@@ -1,4 +1,4 @@
-.PHONY: install run test help
+.PHONY: install run test benchmark help
 .DEFAULT_GOAL := help
 
 help:
@@ -27,3 +27,6 @@ run:
 test: ## Run all tests
 	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go test"
 	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour/renderer && go test"
+
+benchmark: ## Run all the benchmarks
+	docker run --rm --volume="`pwd`:/srv" -ti marmelab-go bash -c	"cd src/connectfour && go test -run=XXX -bench=."

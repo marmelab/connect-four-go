@@ -237,3 +237,38 @@ func testConsecutiveDiscs(t *testing.T) {
 		t.Error("Expected true, got ", areConsecutives)
 	}
 }
+
+func BenchmarkNextBestMove(b *testing.B) {
+	board := Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 2, 0, 0},
+		{0, 0, 0, 0, 2, 0, 1},
+		{0, 0, 1, 1, 2, 0, 2},
+		{0, 1, 1, 2, 1, 2, 1},
+		{1, 2, 1, 1, 2, 1, 2},
+	}
+
+	for n := 0; n < b.N; n++ {
+		board.NextBestMove(1)
+	}
+}
+
+func BenchmarkGuessNextBoards(b *testing.B) {
+	board := Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 2, 0, 0},
+		{0, 0, 0, 0, 2, 0, 1},
+		{0, 0, 1, 1, 2, 0, 2},
+		{0, 1, 1, 2, 1, 2, 1},
+		{1, 2, 1, 1, 2, 1, 2},
+	}
+
+	scoredBoards := make([]ScoredBoard, 0)
+	scoredBoards = append(scoredBoards, ScoredBoard{
+		currentBoard: board,
+	})
+
+	for n := 0; n < b.N; n++ {
+		guessNextBoards(scoredBoards, 1, 1)
+	}
+}
