@@ -163,3 +163,76 @@ func TestGuessNextBoards(t *testing.T) {
 		t.Error("Expected boards to contain next board playing with seventh column")
 	}
 }
+
+func TestGetOpponent(t *testing.T) {
+	player := 1
+	opponent := getOpponent(player)
+
+	if opponent == player {
+		t.Error("Expected player and opponent to be different")
+	}
+}
+
+func TestNextBestMove(t *testing.T) {
+	board := Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 2, 0, 0},
+		{0, 0, 0, 0, 2, 0, 1},
+		{0, 0, 1, 1, 2, 0, 2},
+		{0, 1, 1, 2, 1, 2, 1},
+		{1, 2, 1, 1, 2, 1, 2},
+	}
+
+	column := board.NextBestMove(1)
+
+	fmt.Println(column)
+}
+
+func TestAggregateScoring(t *testing.T) {
+	scoredBoards := make([]ScoredBoard, 0)
+
+	scoredBoards = append(scoredBoards, ScoredBoard{
+		currentScoring: 10,
+	})
+	scoredBoards = append(scoredBoards, ScoredBoard{
+		currentScoring: -10,
+	})
+	scoredBoards = append(scoredBoards, ScoredBoard{
+		currentScoring: 20,
+	})
+	scoredBoards = append(scoredBoards, ScoredBoard{
+		currentScoring: -20,
+	})
+	scoredBoards = append(scoredBoards, ScoredBoard{
+		currentScoring: 30,
+	})
+	scoredBoards = append(scoredBoards, ScoredBoard{
+		currentScoring: -30,
+	})
+
+	aggregatedScore := aggregateScoring(scoredBoards)
+
+	if aggregatedScore != 0 {
+		t.Error("Expected 0, got ", aggregatedScore)
+	}
+}
+
+func testNotConsecutiveDiscs(t *testing.T) {
+	cells := []int{1, 1, 2, 1}
+
+	areConsecutives := areConsecutives(cells, 1)
+
+	if areConsecutives {
+		t.Error("Expected false, got ", areConsecutives)
+	}
+}
+
+func testConsecutiveDiscs(t *testing.T) {
+	cells := []int{1, 1, 1, 1}
+
+	areConsecutives := areConsecutives(cells, 1)
+
+	if !areConsecutives {
+		t.Error("Expected true, got ", areConsecutives)
+	}
+}
