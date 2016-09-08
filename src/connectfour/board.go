@@ -2,7 +2,6 @@ package connectfour
 
 import (
 	"errors"
-	"fmt"
 	"math"
 	"strings"
 )
@@ -67,7 +66,6 @@ func (board Board) AddDisc(column, player int) (Board, error) {
 }
 
 func (board Board) score(player int) int {
-
 	playerFourAligned := board.numberOfAlignedDiscs(player, 4)
 	playerThreeAligned := board.numberOfAlignedDiscs(player, 3)
 	playerTwoAligned := board.numberOfAlignedDiscs(player, 2)
@@ -78,6 +76,7 @@ func (board Board) score(player int) int {
 	if opponentFourAligned > 0 {
 		return -10000
 	}
+
 	return playerFourAligned*10000 + playerThreeAligned*100 + playerTwoAligned
 }
 
@@ -178,7 +177,7 @@ func (board Board) NextBestMove(player int) int {
 	}
 	depth := 1
 	var bestColumn int
-	for depth < 4 {
+	for {
 		bestScore := MinScore
 
 		for i := 0; i < boardWidth; i++ {
@@ -190,11 +189,15 @@ func (board Board) NextBestMove(player int) int {
 			}
 		}
 
-		fmt.Println("Depth", depth, "Best Score", bestScore, "Best column", bestColumn)
+		if depth == 5 {
+			break
+		}
 
 		currentPlayer = getOpponent(currentPlayer)
 
 		scoredBoards = guessNextBoardsAggregated(scoredBoards, currentPlayer, player)
+
+		depth++
 	}
 
 	return bestColumn
