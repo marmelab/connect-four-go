@@ -18,8 +18,8 @@ const MinScore int = math.MinInt32
 type Board [boardHeight][boardWidth]int
 
 type ScoredBoard struct {
-	currentBoard   Board // currentBoard
-	currentScoring int   //currentScoring
+	currentBoard   Board
+	currentScoring int
 }
 
 func New(input string) Board {
@@ -198,20 +198,6 @@ func (board Board) NextBestMove(player int) int {
 	}
 
 	return bestColumn
-	//
-	// bestScore := MinScore
-	// var bestColumn int
-	// for i := 0; i <= boardWidth; i++ {
-	// 	score, err := board.scan(i, player, 3)
-	// 	if err != nil {
-	// 		continue
-	// 	}
-	// 	if score > bestScore {
-	// 		bestScore = score
-	// 		bestColumn = i
-	// 	}
-	// }
-	// return bestColumn
 }
 
 func aggregateScoring(scoredBoards []ScoredBoard) int {
