@@ -8,8 +8,10 @@ import (
 func Parse(input string, firstPlayerChar, secondPlayerChar, emptyCellChar string) connectfour.Board {
 	lines := strings.Split(input, "\n")
 	board := connectfour.Board{}
-
 	for lineIndex, line := range lines {
+		if lineIndex >= connectfour.BoardHeight {
+			break
+		}
 		for i := 0; i < connectfour.BoardWidth; i++ {
 			var char string
 			if i < len(line) {
