@@ -2,7 +2,9 @@ package ai
 
 import (
 	"connectfour"
+	"errors"
 	"math"
+	"time"
 )
 
 const MinScore int = math.MinInt32
@@ -10,6 +12,11 @@ const MinScore int = math.MinInt32
 type ScoredBoard struct {
 	currentBoard   connectfour.Board
 	currentScoring int
+}
+
+type Result struct {
+	Column int
+	Error  error
 }
 
 func score(board connectfour.Board, player int) int {
@@ -134,10 +141,52 @@ func getOpponent(currentPlayer int) int {
 	return 1
 }
 
-func NextBestMove(board connectfour.Board, player int) int {
-	currentPlayer := player
+func NextBestMoveInTime(board connectfour.Board, player int, duration time.Duration) (int, error) {
+	results := make(chan Result, 1)
+	timeout := make(chan bool, 1)
+	column := -1
+	var error error
 
+	go func() {
+		time.Sleep(duration)
+		timeout <- true
+	}()
+
+	go NextBestMove(board, player, results)
+
+	finished := false
+
+	for !finished {
+		select {
+		case finished = <-timeout:
+		case result, channelStillOpen := <-results:
+			if !channelStillOpen {
+				break
+			}
+			column = result.Column
+			if result.Error != nil {
+				error = result.Error
+				break
+			}
+		}
+	}
+
+	if error != nil {
+		return column, error
+	}
+
+	if column == -1 {
+		return column, errors.New("No result found in time")
+	}
+
+	return column, nil
+}
+
+func NextBestMove(board connectfour.Board, player int, results chan Result) {
+	currentPlayer := player
+	defer close(results)
 	var scoredBoards [][]ScoredBoard = make([][]ScoredBoard, connectfour.BoardWidth)
+	firstPossibleBoards := 0
 
 	for i := 0; i < connectfour.BoardWidth; i++ {
 		scoredBoards[i] = make([]ScoredBoard, 0)
@@ -153,13 +202,22 @@ func NextBestMove(board connectfour.Board, player int) int {
 		}
 
 		scoredBoards[i] = append(scoredBoards[i], scoredBoard)
+		firstPossibleBoards++
 	}
-	depth := 1
+
+	if firstPossibleBoards == 0 {
+		results <- Result{
+			Column: -1,
+			Error:  errors.New("No possible move"),
+		}
+		return
+	}
+
 	var bestColumn int
 	for {
 		bestScore := MinScore
-
-		for i := 0; i < connectfour.BoardWidth; i++ {
+		i := 0
+		for ; i < connectfour.BoardWidth; i++ {
 			score := aggregateScoring(scoredBoards[i])
 
 			if score > bestScore {
@@ -167,19 +225,15 @@ func NextBestMove(board connectfour.Board, player int) int {
 				bestColumn = i
 			}
 		}
-
-		if depth == 5 {
-			break
+		results <- Result{
+			Column: bestColumn,
+			Error:  nil,
 		}
 
 		currentPlayer = getOpponent(currentPlayer)
 
 		scoredBoards = guessNextBoardsAggregated(scoredBoards, currentPlayer, player)
-
-		depth++
 	}
-
-	return bestColumn
 }
 
 func aggregateScoring(scoredBoards []ScoredBoard) int {
