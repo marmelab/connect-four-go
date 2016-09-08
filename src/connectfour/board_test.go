@@ -1,7 +1,6 @@
 package connectfour
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -80,7 +79,7 @@ func TestGuessNextBoards(t *testing.T) {
 	})
 
 	nextScoredBoards := guessNextBoards(scoredBoards, 1, 1)
-	fmt.Println(nextScoredBoards)
+
 	firstBoard := Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
@@ -180,12 +179,14 @@ func TestNextBestMove(t *testing.T) {
 		{0, 0, 0, 0, 2, 0, 1},
 		{0, 0, 1, 1, 2, 0, 2},
 		{0, 1, 1, 2, 1, 2, 1},
-		{1, 2, 1, 1, 2, 1, 2},
+		{2, 2, 1, 1, 2, 1, 2},
 	}
 
 	column := board.NextBestMove(1)
 
-	fmt.Println(column)
+	if column != 2 {
+		t.Error("Expected 2, got ", column)
+	}
 }
 
 func TestAggregateScoring(t *testing.T) {
