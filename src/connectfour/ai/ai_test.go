@@ -53,7 +53,7 @@ func TestGuessNextBoards(t *testing.T) {
 
 	scoredBoards := make([]ScoredBoard, 0)
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		currentBoard: board,
+		CurrentBoard: board,
 	})
 
 	nextScoredBoards := guessNextBoards(scoredBoards, 1, 1)
@@ -67,7 +67,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextScoredBoards[0].currentBoard != firstBoard {
+	if nextScoredBoards[0].CurrentBoard != firstBoard {
 		t.Error("Expected boards to contain next board playing with first column")
 	}
 
@@ -80,7 +80,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextScoredBoards[1].currentBoard != secondBoard {
+	if nextScoredBoards[1].CurrentBoard != secondBoard {
 		t.Error("Expected boards to contain next board playing with second column")
 	}
 
@@ -97,7 +97,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextScoredBoards[2].currentBoard != thirdBoard {
+	if nextScoredBoards[2].CurrentBoard != thirdBoard {
 		t.Error("Expected boards to contain next board playing with fourth column")
 	}
 
@@ -110,7 +110,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextScoredBoards[3].currentBoard != fourthBoard {
+	if nextScoredBoards[3].CurrentBoard != fourthBoard {
 		t.Error("Expected boards to contain next board playing with fifth column")
 	}
 
@@ -123,7 +123,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	if nextScoredBoards[4].currentBoard != fifthBoard {
+	if nextScoredBoards[4].CurrentBoard != fifthBoard {
 		t.Error("Expected boards to contain next board playing with sixth column")
 	}
 
@@ -136,7 +136,7 @@ func TestGuessNextBoards(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 1},
 	}
 
-	if nextScoredBoards[5].currentBoard != sixthBoard {
+	if nextScoredBoards[5].CurrentBoard != sixthBoard {
 		t.Error("Expected boards to contain next board playing with seventh column")
 	}
 }
@@ -228,22 +228,22 @@ func TestAggregateScoring(t *testing.T) {
 	scoredBoards := make([]ScoredBoard, 0)
 
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		currentScoring: 10,
+		CurrentScoring: 10,
 	})
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		currentScoring: -10,
+		CurrentScoring: -10,
 	})
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		currentScoring: 20,
+		CurrentScoring: 20,
 	})
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		currentScoring: -20,
+		CurrentScoring: -20,
 	})
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		currentScoring: 30,
+		CurrentScoring: 30,
 	})
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		currentScoring: -30,
+		CurrentScoring: -30,
 	})
 
 	aggregatedScore := aggregateScoring(scoredBoards)
@@ -303,7 +303,7 @@ func BenchmarkGuessNextBoards(b *testing.B) {
 
 	scoredBoards := make([]ScoredBoard, 0)
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		currentBoard: board,
+		CurrentBoard: board,
 	})
 
 	for n := 0; n < b.N; n++ {

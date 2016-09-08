@@ -10,8 +10,8 @@ import (
 const MinScore int = math.MinInt32
 
 type ScoredBoard struct {
-	currentBoard   connectfour.Board
-	currentScoring int
+	CurrentBoard   connectfour.Board
+	CurrentScoring int
 }
 
 type Result struct {
@@ -210,8 +210,8 @@ func NextBestMove(board connectfour.Board, player int, results chan Result) {
 		}
 
 		scoredBoard := ScoredBoard{
-			currentBoard:   nextBoard,
-			currentScoring: score(nextBoard, currentPlayer),
+			CurrentBoard:   nextBoard,
+			CurrentScoring: score(nextBoard, currentPlayer),
 		}
 
 		scoredBoards[i] = append(scoredBoards[i], scoredBoard)
@@ -252,7 +252,7 @@ func NextBestMove(board connectfour.Board, player int, results chan Result) {
 func aggregateScoring(scoredBoards []ScoredBoard) int {
 	score := 0
 	for _, scoredBoard := range scoredBoards {
-		score += scoredBoard.currentScoring
+		score += scoredBoard.CurrentScoring
 	}
 	return score
 }
@@ -276,14 +276,14 @@ func guessNextBoards(scoredBoards []ScoredBoard, currentPlayer, scoringPlayer in
 
 	for _, scoredBoard := range scoredBoards {
 		for i := 0; i < connectfour.BoardWidth; i++ {
-			nextBoard, err := scoredBoard.currentBoard.AddDisc(i, currentPlayer)
+			nextBoard, err := scoredBoard.CurrentBoard.AddDisc(i, currentPlayer)
 			if err != nil {
 				continue
 			}
 
 			nextScoredBoard := ScoredBoard{
-				currentBoard:   nextBoard,
-				currentScoring: score(nextBoard, scoringPlayer),
+				CurrentBoard:   nextBoard,
+				CurrentScoring: score(nextBoard, scoringPlayer),
 			}
 
 			nextScoredBoards = append(nextScoredBoards, nextScoredBoard)
