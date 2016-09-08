@@ -61,81 +61,77 @@ func areConsecutives(cells []int, player int) bool {
 
 func getAllChunks(board connectfour.Board, chunkSize int) [][]int {
 	chunks := [][]int{}
+	results := make(chan []int, 1)
+	finished := make(chan bool, 4)
 
-	horizontalChunks := getHorizontalChunks(board, chunkSize)
-	chunks = append(chunks, horizontalChunks...)
+	go getHorizontalChunks(board, chunkSize, results, finished)
+	go getVerticalChunks(board, chunkSize, results, finished)
+	go getBottomLeftTopRightDiagonalChunks(board, chunkSize, results, finished)
+	go getTopLeftBottomRightDiagonalChunks(board, chunkSize, results, finished)
 
-	verticalChunks := getVerticalChunks(board, chunkSize)
-	chunks = append(chunks, verticalChunks...)
-
-	bottomLeftTopRightDiagonalChunks := getBottomLeftTopRightDiagonalChunks(board, chunkSize)
-	chunks = append(chunks, bottomLeftTopRightDiagonalChunks...)
-
-	topLeftBottomRightDiagonalChunks := getTopLeftBottomRightDiagonalChunks(board, chunkSize)
-	chunks = append(chunks, topLeftBottomRightDiagonalChunks...)
-
-	return chunks
-}
-
-func getHorizontalChunks(board connectfour.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
-
-	for y := 0; y < connectfour.BoardHeight; y++ {
-		line := board[y]
-		for x := 0; x < connectfour.BoardWidth-chunkSize; x++ {
-			chunks = append(chunks, line[x:x+chunkSize])
+	nbFinished := 0
+	for nbFinished < 4 {
+		select {
+		case <-finished:
+			nbFinished++
+			break
+		case parts := <-results:
+			chunks = append(chunks, parts)
 		}
 	}
-
 	return chunks
 }
 
-func getVerticalChunks(board connectfour.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
+func getHorizontalChunks(board connectfour.Board, chunkSize int, results chan []int, finished chan bool) {
+	for y := 0; y < connectfour.BoardHeight; y++ {
+		line := board[y]
+		for x := 0; x < connectfour.BoardWidth-chunkSize+1; x++ {
+			results <- line[x : x+chunkSize]
+		}
+	}
+	finished <- true
+}
 
+func getVerticalChunks(board connectfour.Board, chunkSize int, results chan []int, finished chan bool) {
 	for x := 0; x < connectfour.BoardWidth; x++ {
 		for y := 0; y < connectfour.BoardHeight-chunkSize+1; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[y+z][x]
 			}
-			chunks = append(chunks, part)
+			results <- part
 		}
 	}
 
-	return chunks
+	finished <- true
 }
 
-func getBottomLeftTopRightDiagonalChunks(board connectfour.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
-
+func getBottomLeftTopRightDiagonalChunks(board connectfour.Board, chunkSize int, results chan []int, finished chan bool) {
 	for x := 0; x < connectfour.BoardWidth-chunkSize+1; x++ {
 		for y := chunkSize - 1; y < connectfour.BoardHeight; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[y-z][x+z]
 			}
-			chunks = append(chunks, part)
+			results <- part
 		}
 	}
 
-	return chunks
+	finished <- true
 }
 
-func getTopLeftBottomRightDiagonalChunks(board connectfour.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
-
+func getTopLeftBottomRightDiagonalChunks(board connectfour.Board, chunkSize int, results chan []int, finished chan bool) {
 	for x := chunkSize - 1; x < connectfour.BoardWidth; x++ {
 		for y := chunkSize - 1; y < connectfour.BoardHeight; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[y-z][x-z]
 			}
-			chunks = append(chunks, part)
+			results <- part
 		}
 	}
 
-	return chunks
+	finished <- true
 }
 
 func getOpponent(currentPlayer int) int {

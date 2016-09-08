@@ -41,6 +41,23 @@ func TestScoreSecondPlayerShouldBeHigher(t *testing.T) {
 	}
 }
 
+func TestNumberOfAlignedDiscs2(t *testing.T) {
+	board := connectfour.Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 2, 0, 0, 0, 0},
+		{0, 1, 1, 2, 1, 0, 0},
+		{1, 1, 1, 2, 2, 2, 0},
+	}
+
+	numberOfAlignedDiscs := numberOfAlignedDiscs(board, 2, 3)
+
+	if numberOfAlignedDiscs != 2 {
+		t.Error("Expected 2, got ", numberOfAlignedDiscs)
+	}
+}
+
 func TestGuessNextBoards(t *testing.T) {
 	board := connectfour.Board{
 		{0, 0, 1, 0, 0, 0, 0},
