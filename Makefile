@@ -46,4 +46,4 @@ test: ## Run all tests
 	$(GO_BIN) bash -c "cd src/connectfour/renderer && go test"
 
 benchmark: ## Run all the benchmarks
-	$(GO_BIN) bash -c "cd src/connectfour && go test -run=XXX -bench=."
+	$(GO_BIN) bash -c "cd src/connectfour/ai && go test -run=XXX -bench=."
