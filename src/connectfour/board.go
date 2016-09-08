@@ -74,7 +74,24 @@ func areConsecutives(cells []int, player int) bool {
 func (board Board) getAllChunks(chunkSize int) [][]int {
 	chunks := [][]int{}
 
-	// horizontal
+	horizontalChunks := board.getHorizontalChunks(chunkSize)
+	chunks = append(chunks, horizontalChunks...)
+
+	verticalChunks := board.getVerticalChunks(chunkSize)
+	chunks = append(chunks, verticalChunks...)
+
+	bottomLeftTopRightDiagonalChunks := board.getBottomLeftTopRightDiagonalChunks(chunkSize)
+	chunks = append(chunks, bottomLeftTopRightDiagonalChunks...)
+
+	topLeftBottomRightDiagonalChunks := board.getTopLeftBottomRightDiagonalChunks(chunkSize)
+	chunks = append(chunks, topLeftBottomRightDiagonalChunks...)
+
+	return chunks
+}
+
+func (board Board) getHorizontalChunks(chunkSize int) [][]int {
+	chunks := [][]int{}
+
 	for y := 0; y < BoardHeight; y++ {
 		line := board[y]
 		for x := 0; x < BoardWidth-chunkSize; x++ {
@@ -82,7 +99,12 @@ func (board Board) getAllChunks(chunkSize int) [][]int {
 		}
 	}
 
-	//vertical
+	return chunks
+}
+
+func (board Board) getVerticalChunks(chunkSize int) [][]int {
+	chunks := [][]int{}
+
 	for x := 0; x < BoardWidth; x++ {
 		for y := 0; y < BoardHeight-chunkSize+1; y++ {
 			part := make([]int, chunkSize)
@@ -93,7 +115,12 @@ func (board Board) getAllChunks(chunkSize int) [][]int {
 		}
 	}
 
-	// diagonals /
+	return chunks
+}
+
+func (board Board) getBottomLeftTopRightDiagonalChunks(chunkSize int) [][]int {
+	chunks := [][]int{}
+
 	for x := 0; x < BoardWidth-chunkSize+1; x++ {
 		for y := chunkSize - 1; y < BoardHeight; y++ {
 			part := make([]int, chunkSize)
@@ -104,7 +131,12 @@ func (board Board) getAllChunks(chunkSize int) [][]int {
 		}
 	}
 
-	// diagonals \
+	return chunks
+}
+
+func (board Board) getTopLeftBottomRightDiagonalChunks(chunkSize int) [][]int {
+	chunks := [][]int{}
+
 	for x := chunkSize - 1; x < BoardWidth; x++ {
 		for y := chunkSize - 1; y < BoardHeight; y++ {
 			part := make([]int, chunkSize)
