@@ -1,7 +1,6 @@
 package main
 
 import (
-	"connectfour"
 	"connectfour/parser"
 	"connectfour/renderer"
 	"flag"
