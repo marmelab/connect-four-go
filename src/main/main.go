@@ -1,14 +1,9 @@
 package main
 
 import (
-	"connectfour/ai"
-	"connectfour/parser"
+	"connectfour"
 	"connectfour/renderer"
-	"flag"
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
-	"time"
 )
 
 func check(e error) {
@@ -18,25 +13,46 @@ func check(e error) {
 }
 
 func main() {
-	var filePath string
-	flag.StringVar(&filePath, "file", "default", "Game filepath")
-	flag.Parse()
+	game := connectfour.New()
+	var column int
 
-	absoluteFilePath, _ := filepath.Abs(filePath)
-	fileData, error := ioutil.ReadFile(absoluteFilePath)
-	check(error)
+	fmt.Println("Connect four game started")
+	renderGame(game)
 
-	board := parser.Parse(string(fileData), "x", "o", " ")
+	for !game.IsFinished {
+		if game.CurrentPlayer == connectfour.HumanPlayer {
+			fmt.Println("Your turn to play")
+			fmt.Println("Which column do you want to play ?")
+			_, err := fmt.Scanf("%d\n", &column)
+			_, err = game.HumanPlay(column - 1)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+		} else {
+			fmt.Println("Computer turn to play")
+			column, err := game.ComputerPlay()
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			fmt.Printf("Computer played column %d\n", column)
+		}
 
-	fmt.Println("Board given")
-	fmt.Println(renderer.Render(board, "x", "o", " "))
+		renderGame(game)
 
-	column, err := ai.NextBestMoveInTime(board, 1, 10*time.Second)
-	check(err)
+		if game.IsFinished {
+			if game.Winner == connectfour.HumanPlayer {
+				fmt.Println("You won")
+			} else if game.Winner == connectfour.AIPlayer {
+				fmt.Println("Computer won")
+			} else {
+				fmt.Println("Draw")
+			}
+		}
+	}
+}
 
-	board, err = board.AddDisc(column, 1)
-	check(err)
-
-	fmt.Println("Advised play : ", column)
-	fmt.Println(renderer.Render(board, "x", "o", " "))
+func renderGame(game connectfour.Game) {
+	renderer.Render(game.Board, "x", "o", " ")
 }
