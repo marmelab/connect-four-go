@@ -206,6 +206,23 @@ func TestNextBestMoveInTimeIsReturned(t *testing.T) {
 	}
 }
 
+func TestNextBestMoveInTimeIsFirstColumn(t *testing.T) {
+	gameBoard := board.Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0},
+		{1, 0, 2, 2, 0, 0, 0},
+	}
+
+	column, _ := NextBestMoveInTime(gameBoard, 2, time.Second)
+
+	if column != 0 {
+		t.Error("Expected best move to be column 0, got", column)
+	}
+}
+
 func TestNextBestMoveInTimeNoIllegalMoveFromComputer(t *testing.T) {
 	gameBoard := board.Board{
 		{1, 2, 1, 0, 2, 1, 0},

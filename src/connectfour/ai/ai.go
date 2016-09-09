@@ -30,12 +30,13 @@ func score(gameBoard board.Board, player int) int {
 
 	opponent := getOpponent(player)
 	opponentFourSeriesNumber := numberOfAlignedDiscs(gameBoard, opponent, 4)
+	opponentThreeSeriesNumber := numberOfAlignedDiscs(gameBoard, opponent, 3)
 
 	if opponentFourSeriesNumber > 0 {
 		return -10000
 	}
 
-	return fourSeriesNumber*10000 + threeSeriesNumber*100 + twoSeriesNumber
+	return fourSeriesNumber*10000 + opponentThreeSeriesNumber*9000 + threeSeriesNumber*100 + twoSeriesNumber
 }
 
 func numberOfAlignedDiscs(gameBoard board.Board, player int, chunkSize int) int {
@@ -234,6 +235,7 @@ func NextBestMove(gameBoard board.Board, player int, results chan BestMove) {
 				bestColumn = i
 			}
 		}
+
 		results <- BestMove{
 			Column: bestColumn,
 			Error:  nil,
