@@ -36,7 +36,7 @@ func main() {
 				fmt.Println(err)
 				continue
 			}
-			fmt.Printf("Computer played column %d\n", column)
+			fmt.Printf("Computer played column %d\n", column+1)
 		}
 
 		renderGame(game)
@@ -56,5 +56,6 @@ func main() {
 }
 
 func renderGame(game connectfour.Game) {
-	renderer.Render(game.Board, "x", "o", " ")
+
+	renderer.Render(game.Board, "\x1b[91;1m\x1b[48;5;67m ● \x1b[0m", "\x1b[38;5;226m\x1b[48;5;67m ● \x1b[0m", "\x1b[97;1m\x1b[48;5;67m ● \x1b[0m", " %v ")
 }
