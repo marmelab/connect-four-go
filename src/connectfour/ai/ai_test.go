@@ -177,7 +177,7 @@ func TestNextBestMove(t *testing.T) {
 		{2, 2, 1, 1, 2, 1, 2},
 	}
 
-	results := make(chan Result, 1)
+	results := make(chan BestMove, 1)
 	go NextBestMove(gameBoard, 1, results)
 
 	result := <-results

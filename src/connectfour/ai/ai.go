@@ -142,7 +142,7 @@ func getOpponent(currentPlayer int) int {
 }
 
 func NextBestMoveInTime(gameBoard board.Board, player int, duration time.Duration) (int, error) {
-	results := make(chan Result, 1)
+	results := make(chan BestMove, 1)
 	timeout := make(chan bool, 1)
 	column := -1
 	var error error
@@ -183,7 +183,7 @@ func NextBestMoveInTime(gameBoard board.Board, player int, duration time.Duratio
 	return column, nil
 }
 
-func NextBestMove(gameBoard board.Board, player int, results chan Result) {
+func NextBestMove(gameBoard board.Board, player int, results chan BestMove) {
 	currentPlayer := player
 	defer close(results)
 	var scoredBoards [][]ScoredBoard = make([][]ScoredBoard, board.BoardWidth)
