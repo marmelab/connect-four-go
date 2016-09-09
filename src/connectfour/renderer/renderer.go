@@ -1,25 +1,35 @@
 package renderer
 
 import (
-	"bytes"
-	"connectfour"
+	"connectfour/board"
+	"github.com/olekukonko/tablewriter"
+	"os"
+	"strconv"
 )
 
-func Render(board connectfour.Board, firstPlayerChar, secondPlayerChar, emptyCellChar string) string {
-	var buffer bytes.Buffer
-	for _, line := range board {
-		for _, cell := range line {
-			switch cell {
+func Render(gameBoard board.Board, firstPlayerChar, secondPlayerChar, emptyCellChar string) {
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetRowLine(true)
+	headers := make([]string, 0)
+	for i := 1; i <= board.BoardWidth; i++ {
+		headers = append(headers, strconv.Itoa(i))
+	}
+	table.SetHeader(headers)
+
+	for y := 0; y < board.BoardHeight; y++ {
+		line := make([]string, 0)
+		for x := 0; x < board.BoardWidth; x++ {
+			switch gameBoard[y][x] {
 			case 1:
-				buffer.WriteString(firstPlayerChar)
+				line = append(line, firstPlayerChar)
 			case 2:
-				buffer.WriteString(secondPlayerChar)
+				line = append(line, secondPlayerChar)
 			default:
-				buffer.WriteString(emptyCellChar)
+				line = append(line, emptyCellChar)
 			}
 		}
-		buffer.WriteString("\n")
+		table.Append(line)
 	}
-	output := buffer.String()
-	return output[:len(output)-1]
+	table.Render()
 }
