@@ -206,6 +206,24 @@ func TestNextBestMoveInTimeIsReturned(t *testing.T) {
 	}
 }
 
+func TestNextBestMoveInTimeNoIllegalMoveFromComputer(t *testing.T) {
+	gameBoard := board.Board{
+		{1, 2, 1, 0, 2, 1, 0},
+		{2, 1, 2, 0, 2, 2, 0},
+		{1, 1, 2, 0, 1, 2, 2},
+		{1, 2, 2, 1, 1, 1, 1},
+		{2, 1, 1, 2, 2, 2, 2},
+		{2, 2, 1, 1, 1, 1, 1},
+	}
+
+	column, err := NextBestMoveInTime(gameBoard, 2, time.Second)
+	gameBoard.AddDisc(column, 2)
+
+	if err != nil {
+		t.Error("Expected not to have an error")
+	}
+}
+
 func TestErrorIsReturnWhenNotEnoughTimeForNextBestMoveInTime(t *testing.T) {
 	t.Skip("Try to make this test work somehow, result is return after 1 ns no matter what")
 
