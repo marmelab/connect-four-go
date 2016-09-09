@@ -16,9 +16,10 @@ xoxxoxo`
 
 	board := parser.Parse(boardInput, "x", "o", ".")
 
-	fmt.Println(Render(board, "x", "o", "."))
+	fmt.Print(Render(board, "x", "o", ".", "%v"))
 
 	// Output:
+	// 1234567
 	// .......
 	// ....o..
 	// ..x.o.x

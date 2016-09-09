@@ -1,18 +1,18 @@
 package parser
 
 import (
-	"connectfour"
+	"connectfour/board"
 	"strings"
 )
 
-func Parse(input string, firstPlayerChar, secondPlayerChar, emptyCellChar string) connectfour.Board {
+func Parse(input string, firstPlayerChar, secondPlayerChar, emptyCellChar string) board.Board {
 	lines := strings.Split(input, "\n")
-	board := connectfour.Board{}
+	gameBoard := board.Board{}
 	for lineIndex, line := range lines {
-		if lineIndex >= connectfour.BoardHeight {
+		if lineIndex >= board.BoardHeight {
 			break
 		}
-		for i := 0; i < connectfour.BoardWidth; i++ {
+		for i := 0; i < board.BoardWidth; i++ {
 			var char string
 			if i < len(line) {
 				char = string(line[i])
@@ -21,14 +21,14 @@ func Parse(input string, firstPlayerChar, secondPlayerChar, emptyCellChar string
 			}
 			switch char {
 			case firstPlayerChar:
-				board[lineIndex][i] = 1
+				gameBoard[lineIndex][i] = 1
 			case secondPlayerChar:
-				board[lineIndex][i] = 2
+				gameBoard[lineIndex][i] = 2
 			default:
-				board[lineIndex][i] = 0
+				gameBoard[lineIndex][i] = 0
 			}
 		}
 	}
 
-	return board
+	return gameBoard
 }

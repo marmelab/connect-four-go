@@ -1,4 +1,4 @@
-package connectfour
+package board
 
 import (
 	"errors"
@@ -25,4 +25,15 @@ func (board Board) AddDisc(column, player int) (Board, error) {
 	}
 
 	return board, nil
+}
+
+func (board Board) IsFull() bool {
+	for x := 0; x < BoardWidth; x++ {
+		for y := 0; y < BoardHeight; y++ {
+			if board[y][x] == 0 {
+				return false
+			}
+		}
+	}
+	return true
 }

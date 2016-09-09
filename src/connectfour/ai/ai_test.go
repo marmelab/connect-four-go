@@ -1,13 +1,13 @@
 package ai
 
 import (
-	"connectfour"
+	"connectfour/board"
 	"testing"
 	"time"
 )
 
 func TestNumberOfAlignedDiscs(t *testing.T) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 2, 0, 0},
 		{0, 0, 1, 0, 2, 0, 1},
@@ -16,7 +16,7 @@ func TestNumberOfAlignedDiscs(t *testing.T) {
 		{1, 2, 1, 1, 2, 1, 2},
 	}
 
-	numberOfAlignedDiscs := numberOfAlignedDiscs(board, 1, 3)
+	numberOfAlignedDiscs := numberOfAlignedDiscs(gameBoard, 1, 3)
 
 	if numberOfAlignedDiscs != 5 {
 		t.Error("Expected 5, got ", numberOfAlignedDiscs)
@@ -24,7 +24,7 @@ func TestNumberOfAlignedDiscs(t *testing.T) {
 }
 
 func TestScoreSecondPlayerShouldBeHigher(t *testing.T) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0},
@@ -33,16 +33,16 @@ func TestScoreSecondPlayerShouldBeHigher(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	firstPlayerScore := score(board, 1)
-	secondPlayerScore := score(board, 2)
+	firstPlayerScore := score(gameBoard, 1)
+	secondPlayerScore := score(gameBoard, 2)
 
-	if firstPlayerScore > secondPlayerScore {
-		t.Error("Expected second player score to be higher than first player score")
+	if firstPlayerScore < secondPlayerScore {
+		t.Error("Expected first player score to be higher than second player score")
 	}
 }
 
 func TestNumberOfAlignedDiscs2(t *testing.T) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0},
@@ -51,7 +51,7 @@ func TestNumberOfAlignedDiscs2(t *testing.T) {
 		{1, 1, 1, 2, 2, 2, 0},
 	}
 
-	numberOfAlignedDiscs := numberOfAlignedDiscs(board, 2, 3)
+	numberOfAlignedDiscs := numberOfAlignedDiscs(gameBoard, 2, 3)
 
 	if numberOfAlignedDiscs != 2 {
 		t.Error("Expected 2, got ", numberOfAlignedDiscs)
@@ -59,7 +59,7 @@ func TestNumberOfAlignedDiscs2(t *testing.T) {
 }
 
 func TestGuessNextBoards(t *testing.T) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0, 0, 0},
@@ -70,12 +70,12 @@ func TestGuessNextBoards(t *testing.T) {
 
 	scoredBoards := make([]ScoredBoard, 0)
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		CurrentBoard: board,
+		CurrentBoard: gameBoard,
 	})
 
 	nextScoredBoards := guessNextBoards(scoredBoards, 1, 1)
 
-	firstBoard := connectfour.Board{
+	firstBoard := board.Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0, 0, 0},
@@ -88,7 +88,7 @@ func TestGuessNextBoards(t *testing.T) {
 		t.Error("Expected boards to contain next board playing with first column")
 	}
 
-	secondBoard := connectfour.Board{
+	secondBoard := board.Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0, 0, 0},
@@ -105,7 +105,7 @@ func TestGuessNextBoards(t *testing.T) {
 		t.Error("Expected next boards not to contain any board on column two")
 	}
 
-	thirdBoard := connectfour.Board{
+	thirdBoard := board.Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0, 0, 0},
@@ -118,7 +118,7 @@ func TestGuessNextBoards(t *testing.T) {
 		t.Error("Expected boards to contain next board playing with fourth column")
 	}
 
-	fourthBoard := connectfour.Board{
+	fourthBoard := board.Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0, 0, 0},
@@ -131,7 +131,7 @@ func TestGuessNextBoards(t *testing.T) {
 		t.Error("Expected boards to contain next board playing with fifth column")
 	}
 
-	fifthBoard := connectfour.Board{
+	fifthBoard := board.Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0, 0, 0},
@@ -144,7 +144,7 @@ func TestGuessNextBoards(t *testing.T) {
 		t.Error("Expected boards to contain next board playing with sixth column")
 	}
 
-	sixthBoard := connectfour.Board{
+	sixthBoard := board.Board{
 		{0, 0, 1, 0, 0, 0, 0},
 		{0, 0, 2, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0, 0, 0},
@@ -168,7 +168,7 @@ func TestGetOpponent(t *testing.T) {
 }
 
 func TestNextBestMove(t *testing.T) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 2, 0, 0},
 		{0, 0, 0, 0, 2, 0, 1},
@@ -178,7 +178,7 @@ func TestNextBestMove(t *testing.T) {
 	}
 
 	results := make(chan BestMove, 1)
-	go NextBestMove(board, 1, results)
+	go NextBestMove(gameBoard, 1, results)
 
 	result := <-results
 	if result.Column != 2 {
@@ -187,7 +187,7 @@ func TestNextBestMove(t *testing.T) {
 }
 
 func TestNextBestMoveInTimeIsReturned(t *testing.T) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 2, 0, 0},
 		{0, 0, 0, 0, 2, 0, 1},
@@ -196,7 +196,7 @@ func TestNextBestMoveInTimeIsReturned(t *testing.T) {
 		{2, 2, 1, 1, 2, 1, 2},
 	}
 
-	column, err := NextBestMoveInTime(board, 1, 2*time.Second)
+	column, err := NextBestMoveInTime(gameBoard, 1, 2*time.Second)
 
 	if err != nil {
 		t.Error("Expected to have at least one result in time")
@@ -206,10 +206,45 @@ func TestNextBestMoveInTimeIsReturned(t *testing.T) {
 	}
 }
 
+func TestNextBestMoveInTimeIsFirstColumn(t *testing.T) {
+	gameBoard := board.Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0},
+		{1, 0, 2, 2, 0, 0, 0},
+	}
+
+	column, _ := NextBestMoveInTime(gameBoard, 2, time.Second)
+
+	if column != 0 {
+		t.Error("Expected best move to be column 0, got", column)
+	}
+}
+
+func TestNextBestMoveInTimeNoIllegalMoveFromComputer(t *testing.T) {
+	gameBoard := board.Board{
+		{1, 2, 1, 0, 2, 1, 0},
+		{2, 1, 2, 0, 2, 2, 0},
+		{1, 1, 2, 0, 1, 2, 2},
+		{1, 2, 2, 1, 1, 1, 1},
+		{2, 1, 1, 2, 2, 2, 2},
+		{2, 2, 1, 1, 1, 1, 1},
+	}
+
+	column, err := NextBestMoveInTime(gameBoard, 2, time.Second)
+	gameBoard.AddDisc(column, 2)
+
+	if err != nil {
+		t.Error("Expected not to have an error")
+	}
+}
+
 func TestErrorIsReturnWhenNotEnoughTimeForNextBestMoveInTime(t *testing.T) {
 	t.Skip("Try to make this test work somehow, result is return after 1 ns no matter what")
 
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 2, 0, 0},
 		{0, 0, 0, 0, 2, 0, 0},
@@ -218,7 +253,7 @@ func TestErrorIsReturnWhenNotEnoughTimeForNextBestMoveInTime(t *testing.T) {
 		{2, 2, 1, 1, 2, 1, 2},
 	}
 
-	column, err := NextBestMoveInTime(board, 1, 1*time.Nanosecond)
+	column, err := NextBestMoveInTime(gameBoard, 1, 1*time.Nanosecond)
 
 	if err == nil {
 		t.Error("Expected not to have enough time to get a result, result", column)
@@ -226,7 +261,7 @@ func TestErrorIsReturnWhenNotEnoughTimeForNextBestMoveInTime(t *testing.T) {
 }
 
 func TestWhatHappensWhenBoardFull(t *testing.T) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{1, 1, 1, 2, 1, 2, 1},
 		{2, 2, 2, 1, 2, 1, 1},
 		{1, 1, 1, 2, 2, 1, 1},
@@ -235,7 +270,7 @@ func TestWhatHappensWhenBoardFull(t *testing.T) {
 		{2, 2, 1, 1, 2, 1, 2},
 	}
 
-	_, err := NextBestMoveInTime(board, 1, 1*time.Nanosecond)
+	_, err := NextBestMoveInTime(gameBoard, 1, 1*time.Nanosecond)
 	if err == nil {
 		t.Error("Expected to have an error")
 	}
@@ -291,7 +326,7 @@ func testConsecutiveDiscs(t *testing.T) {
 }
 
 func BenchmarkNextBestMove(b *testing.B) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 2, 0, 0},
 		{0, 0, 0, 0, 2, 0, 1},
@@ -302,14 +337,29 @@ func BenchmarkNextBestMove(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 		results := make(chan BestMove, 1)
-		go NextBestMove(board, 1, results)
+		go NextBestMove(gameBoard, 1, results)
 
 		<-results
 	}
 }
 
+func BenchmarkNextBestMoveInTime(b *testing.B) {
+	gameBoard := board.Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 2, 0, 0},
+		{0, 0, 0, 0, 2, 0, 1},
+		{0, 0, 1, 1, 2, 0, 2},
+		{0, 1, 1, 2, 1, 2, 1},
+		{2, 2, 1, 1, 2, 1, 2},
+	}
+
+	for n := 0; n < b.N; n++ {
+		NextBestMoveInTime(gameBoard, 1, time.Second)
+	}
+}
+
 func BenchmarkGuessNextBoards(b *testing.B) {
-	board := connectfour.Board{
+	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 2, 0, 0},
 		{0, 0, 0, 0, 2, 0, 1},
@@ -320,7 +370,7 @@ func BenchmarkGuessNextBoards(b *testing.B) {
 
 	scoredBoards := make([]ScoredBoard, 0)
 	scoredBoards = append(scoredBoards, ScoredBoard{
-		CurrentBoard: board,
+		CurrentBoard: gameBoard,
 	})
 
 	for n := 0; n < b.N; n++ {

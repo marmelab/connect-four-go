@@ -1,14 +1,10 @@
 package main
 
 import (
-	"connectfour/ai"
-	"connectfour/parser"
+	"connectfour"
+	"connectfour/board"
 	"connectfour/renderer"
-	"flag"
 	"fmt"
-	"io/ioutil"
-	"path/filepath"
-	"time"
 )
 
 func check(e error) {
@@ -18,25 +14,63 @@ func check(e error) {
 }
 
 func main() {
-	var filePath string
-	flag.StringVar(&filePath, "file", "default", "Game filepath")
-	flag.Parse()
+	game := connectfour.New()
+	var column int
 
-	absoluteFilePath, _ := filepath.Abs(filePath)
-	fileData, error := ioutil.ReadFile(absoluteFilePath)
-	check(error)
+	fmt.Println("Connect four game started")
+	renderGame(game)
 
-	board := parser.Parse(string(fileData), "x", "o", " ")
+	for !game.IsFinished {
+		if game.CurrentPlayer == connectfour.HumanPlayer {
+			fmt.Println("\x1b[91;1m● \x1b[0mYour turn to play")
 
-	fmt.Println("Board given")
-	fmt.Println(renderer.Render(board, "x", "o", " "))
+			column = readColumn()
 
-	column, err := ai.NextBestMoveInTime(board, 1, 10*time.Second)
-	check(err)
+			_, err := game.HumanPlay(column - 1)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+		} else {
+			fmt.Println("\x1b[38;5;226m● \x1b[0mComputer turn to play")
+			column, err := game.ComputerPlay()
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			fmt.Printf("Computer played column %d\n", column+1)
+		}
 
-	board, err = board.AddDisc(column, 1)
-	check(err)
+		renderGame(game)
 
-	fmt.Println("Advised play : ", column)
-	fmt.Println(renderer.Render(board, "x", "o", " "))
+		fmt.Println("-------------------------------")
+
+		if game.IsFinished {
+			if game.Winner == connectfour.HumanPlayer {
+				fmt.Println("You won")
+			} else if game.Winner == connectfour.AIPlayer {
+				fmt.Println("Computer won")
+			} else {
+				fmt.Println("Draw")
+			}
+		}
+	}
+}
+
+func readColumn() int {
+	column := -1
+	fmt.Println("Which column do you want to play ?")
+	for !(column >= 0 && column <= board.BoardWidth) {
+		_, err := fmt.Scanf("%d", &column)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			continue
+		}
+	}
+	return column
+}
+
+func renderGame(game connectfour.Game) {
+	fmt.Print(renderer.Render(game.Board, "\x1b[91;1m\x1b[48;5;67m ● \x1b[0m", "\x1b[38;5;226m\x1b[48;5;67m ● \x1b[0m", "\x1b[97;1m\x1b[48;5;67m ● \x1b[0m", " %v "))
 }

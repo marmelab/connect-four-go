@@ -2,14 +2,20 @@ package renderer
 
 import (
 	"bytes"
-	"connectfour"
+	"connectfour/board"
+	"fmt"
+	"strconv"
 )
 
-func Render(board connectfour.Board, firstPlayerChar, secondPlayerChar, emptyCellChar string) string {
+func Render(gameBoard board.Board, firstPlayerChar, secondPlayerChar, emptyCellChar, headerChar string) string {
 	var buffer bytes.Buffer
-	for _, line := range board {
-		for _, cell := range line {
-			switch cell {
+	for x := 1; x <= board.BoardWidth; x++ {
+		buffer.WriteString(fmt.Sprintf(headerChar, strconv.Itoa(x)))
+	}
+	buffer.WriteString("\n")
+	for y := 0; y < board.BoardHeight; y++ {
+		for x := 0; x < board.BoardWidth; x++ {
+			switch gameBoard[y][x] {
 			case 1:
 				buffer.WriteString(firstPlayerChar)
 			case 2:
@@ -20,6 +26,5 @@ func Render(board connectfour.Board, firstPlayerChar, secondPlayerChar, emptyCel
 		}
 		buffer.WriteString("\n")
 	}
-	output := buffer.String()
-	return output[:len(output)-1]
+	return buffer.String()
 }
