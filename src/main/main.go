@@ -2,6 +2,7 @@ package main
 
 import (
 	"connectfour"
+	"connectfour/board"
 	"connectfour/renderer"
 	"fmt"
 )
@@ -22,9 +23,10 @@ func main() {
 	for !game.IsFinished {
 		if game.CurrentPlayer == connectfour.HumanPlayer {
 			fmt.Println("\x1b[91;1m● \x1b[0mYour turn to play")
-			fmt.Println("Which column do you want to play ?")
-			_, err := fmt.Scanf("%d\n", &column)
-			_, err = game.HumanPlay(column - 1)
+
+			column = readColumn()
+
+			_, err := game.HumanPlay(column - 1)
 			if err != nil {
 				fmt.Println(err)
 				continue
@@ -53,6 +55,20 @@ func main() {
 			}
 		}
 	}
+}
+
+func readColumn() int {
+	column := -1
+	fmt.Println("Which column do you want to play ?")
+	for !(column >= 0 && column <= board.BoardWidth) {
+		_, err := fmt.Scanf("%d", &column)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			continue
+		}
+	}
+	return column
 }
 
 func renderGame(game connectfour.Game) {
