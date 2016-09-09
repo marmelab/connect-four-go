@@ -14,7 +14,7 @@ type ScoredBoard struct {
 	CurrentScoring int
 }
 
-type Result struct {
+type BestMove struct {
 	Column int
 	Error  error
 }
@@ -142,7 +142,7 @@ func getOpponent(currentPlayer int) int {
 }
 
 func NextBestMoveInTime(board connectfour.Board, player int, duration time.Duration) (int, error) {
-	results := make(chan Result, 1)
+	results := make(chan BestMove, 1)
 	timeout := make(chan bool, 1)
 	column := -1
 	var error error
@@ -183,7 +183,7 @@ func NextBestMoveInTime(board connectfour.Board, player int, duration time.Durat
 	return column, nil
 }
 
-func NextBestMove(board connectfour.Board, player int, results chan Result) {
+func NextBestMove(board connectfour.Board, player int, results chan BestMove) {
 	currentPlayer := player
 	defer close(results)
 	var scoredBoards [][]ScoredBoard = make([][]ScoredBoard, connectfour.BoardWidth)
@@ -198,7 +198,7 @@ func NextBestMove(board connectfour.Board, player int, results chan Result) {
 		}
 
 		if hasWon(nextBoard, player) {
-			results <- Result{
+			results <- BestMove{
 				Column: i,
 				Error:  nil,
 			}
@@ -215,7 +215,7 @@ func NextBestMove(board connectfour.Board, player int, results chan Result) {
 	}
 
 	if firstPossibleBoards == 0 {
-		results <- Result{
+		results <- BestMove{
 			Column: -1,
 			Error:  errors.New("No possible move"),
 		}
@@ -234,7 +234,7 @@ func NextBestMove(board connectfour.Board, player int, results chan Result) {
 				bestColumn = i
 			}
 		}
-		results <- Result{
+		results <- BestMove{
 			Column: bestColumn,
 			Error:  nil,
 		}

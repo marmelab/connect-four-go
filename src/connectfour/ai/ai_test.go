@@ -177,7 +177,7 @@ func TestNextBestMove(t *testing.T) {
 		{2, 2, 1, 1, 2, 1, 2},
 	}
 
-	results := make(chan Result, 1)
+	results := make(chan BestMove, 1)
 	go NextBestMove(board, 1, results)
 
 	result := <-results
@@ -301,7 +301,7 @@ func BenchmarkNextBestMove(b *testing.B) {
 	}
 
 	for n := 0; n < b.N; n++ {
-		results := make(chan Result, 1)
+		results := make(chan BestMove, 1)
 		go NextBestMove(board, 1, results)
 
 		<-results
