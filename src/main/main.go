@@ -21,7 +21,7 @@ func main() {
 
 	for !game.IsFinished {
 		if game.CurrentPlayer == connectfour.HumanPlayer {
-			fmt.Println("Your turn to play")
+			fmt.Println("\x1b[91;1m● \x1b[0mYour turn to play")
 			fmt.Println("Which column do you want to play ?")
 			_, err := fmt.Scanf("%d\n", &column)
 			_, err = game.HumanPlay(column - 1)
@@ -30,7 +30,7 @@ func main() {
 				continue
 			}
 		} else {
-			fmt.Println("Computer turn to play")
+			fmt.Println("\x1b[38;5;226m● \x1b[0mComputer turn to play")
 			column, err := game.ComputerPlay()
 			if err != nil {
 				fmt.Println(err)
