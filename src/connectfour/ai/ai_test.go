@@ -326,6 +326,21 @@ func BenchmarkNextBestMove(b *testing.B) {
 	}
 }
 
+func BenchmarkNextBestMoveInTime(b *testing.B) {
+	gameBoard := board.Board{
+		{0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 2, 0, 0},
+		{0, 0, 0, 0, 2, 0, 1},
+		{0, 0, 1, 1, 2, 0, 2},
+		{0, 1, 1, 2, 1, 2, 1},
+		{2, 2, 1, 1, 2, 1, 2},
+	}
+
+	for n := 0; n < b.N; n++ {
+		NextBestMoveInTime(gameBoard, 1, time.Second)
+	}
+}
+
 func BenchmarkGuessNextBoards(b *testing.B) {
 	gameBoard := board.Board{
 		{0, 0, 0, 0, 0, 0, 0},
