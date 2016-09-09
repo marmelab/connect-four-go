@@ -1,27 +1,30 @@
 package renderer
 
 import (
+	"bytes"
 	"connectfour/board"
 	"fmt"
 	"strconv"
 )
 
-func Render(gameBoard board.Board, firstPlayerChar, secondPlayerChar, emptyCellChar, headerChar string) {
+func Render(gameBoard board.Board, firstPlayerChar, secondPlayerChar, emptyCellChar, headerChar string) string {
+	var buffer bytes.Buffer
 	for x := 1; x <= board.BoardWidth; x++ {
-		fmt.Printf(headerChar, strconv.Itoa(x))
+		buffer.WriteString(fmt.Sprintf(headerChar, strconv.Itoa(x)))
 	}
-	fmt.Println()
+	buffer.WriteString("\n")
 	for y := 0; y < board.BoardHeight; y++ {
 		for x := 0; x < board.BoardWidth; x++ {
 			switch gameBoard[y][x] {
 			case 1:
-				fmt.Print(firstPlayerChar)
+				buffer.WriteString(firstPlayerChar)
 			case 2:
-				fmt.Print(secondPlayerChar)
+				buffer.WriteString(secondPlayerChar)
 			default:
-				fmt.Print(emptyCellChar)
+				buffer.WriteString(emptyCellChar)
 			}
 		}
-		fmt.Println()
+		buffer.WriteString("\n")
 	}
+	return buffer.String()
 }

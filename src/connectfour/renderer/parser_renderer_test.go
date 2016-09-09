@@ -2,6 +2,7 @@ package renderer
 
 import (
 	"connectfour/parser"
+	"fmt"
 )
 
 func ExampleItPrintsTheRightBoardBack() {
@@ -15,7 +16,7 @@ xoxxoxo`
 
 	board := parser.Parse(boardInput, "x", "o", ".")
 
-	Render(board, "x", "o", ".", "%v")
+	fmt.Print(Render(board, "x", "o", ".", "%v"))
 
 	// Output:
 	// 1234567
