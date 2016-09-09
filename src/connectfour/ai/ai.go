@@ -41,10 +41,20 @@ func score(gameBoard board.Board, player int) int {
 
 func numberOfAlignedDiscs(gameBoard board.Board, player int, chunkSize int) int {
 	count := 0
+	resultsChannel := make(chan []int, 1)
+	finishedChannel := make(chan bool, 1)
 
-	for _, chunk := range getAllChunks(gameBoard, chunkSize) {
-		if areConsecutives(chunk, player) {
-			count++
+	go getAllChunks(gameBoard, chunkSize, resultsChannel, finishedChannel)
+
+	finished := false
+
+	for !finished {
+		select {
+		case finished = <-finishedChannel:
+		case parts := <-resultsChannel:
+			if areConsecutives(parts, player) {
+				count++
+			}
 		}
 	}
 
@@ -60,27 +70,22 @@ func areConsecutives(cells []int, player int) bool {
 	return true
 }
 
-func getAllChunks(gameBoard board.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
-	results := make(chan []int, 1)
-	finished := make(chan bool, 4)
+func getAllChunks(gameBoard board.Board, chunkSize int, results chan []int, finished chan bool) {
+	subFinished := make(chan bool, 4)
 
-	go getHorizontalChunks(gameBoard, chunkSize, results, finished)
-	go getVerticalChunks(gameBoard, chunkSize, results, finished)
-	go getBottomLeftTopRightDiagonalChunks(gameBoard, chunkSize, results, finished)
-	go getTopLeftBottomRightDiagonalChunks(gameBoard, chunkSize, results, finished)
+	go getHorizontalChunks(gameBoard, chunkSize, results, subFinished)
+	go getVerticalChunks(gameBoard, chunkSize, results, subFinished)
+	go getBottomLeftTopRightDiagonalChunks(gameBoard, chunkSize, results, subFinished)
+	go getTopLeftBottomRightDiagonalChunks(gameBoard, chunkSize, results, subFinished)
 
 	nbFinished := 0
 	for nbFinished < 4 {
 		select {
-		case <-finished:
+		case <-subFinished:
 			nbFinished++
-			break
-		case parts := <-results:
-			chunks = append(chunks, parts)
 		}
 	}
-	return chunks
+	finished <- true
 }
 
 func getHorizontalChunks(gameBoard board.Board, chunkSize int, results chan []int, finished chan bool) {

@@ -36,8 +36,8 @@ func TestScoreSecondPlayerShouldBeHigher(t *testing.T) {
 	firstPlayerScore := score(gameBoard, 1)
 	secondPlayerScore := score(gameBoard, 2)
 
-	if firstPlayerScore > secondPlayerScore {
-		t.Error("Expected second player score to be higher than first player score")
+	if firstPlayerScore < secondPlayerScore {
+		t.Error("Expected first player score to be higher than second player score")
 	}
 }
 
