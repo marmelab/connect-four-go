@@ -2,14 +2,25 @@ package ai
 
 import (
 	"connectfour"
+	"errors"
 	"math"
+	"time"
 )
 
 const MinScore int = math.MinInt32
 
 type ScoredBoard struct {
-	currentBoard   connectfour.Board
-	currentScoring int
+	CurrentBoard   connectfour.Board
+	CurrentScoring int
+}
+
+type BestMove struct {
+	Column int
+	Error  error
+}
+
+func hasWon(board connectfour.Board, player int) bool {
+	return numberOfAlignedDiscs(board, player, 4) > 0
 }
 
 func score(board connectfour.Board, player int) int {
@@ -50,81 +61,77 @@ func areConsecutives(cells []int, player int) bool {
 
 func getAllChunks(board connectfour.Board, chunkSize int) [][]int {
 	chunks := [][]int{}
+	results := make(chan []int, 1)
+	finished := make(chan bool, 4)
 
-	horizontalChunks := getHorizontalChunks(board, chunkSize)
-	chunks = append(chunks, horizontalChunks...)
+	go getHorizontalChunks(board, chunkSize, results, finished)
+	go getVerticalChunks(board, chunkSize, results, finished)
+	go getBottomLeftTopRightDiagonalChunks(board, chunkSize, results, finished)
+	go getTopLeftBottomRightDiagonalChunks(board, chunkSize, results, finished)
 
-	verticalChunks := getVerticalChunks(board, chunkSize)
-	chunks = append(chunks, verticalChunks...)
-
-	bottomLeftTopRightDiagonalChunks := getBottomLeftTopRightDiagonalChunks(board, chunkSize)
-	chunks = append(chunks, bottomLeftTopRightDiagonalChunks...)
-
-	topLeftBottomRightDiagonalChunks := getTopLeftBottomRightDiagonalChunks(board, chunkSize)
-	chunks = append(chunks, topLeftBottomRightDiagonalChunks...)
-
-	return chunks
-}
-
-func getHorizontalChunks(board connectfour.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
-
-	for y := 0; y < connectfour.BoardHeight; y++ {
-		line := board[y]
-		for x := 0; x < connectfour.BoardWidth-chunkSize; x++ {
-			chunks = append(chunks, line[x:x+chunkSize])
+	nbFinished := 0
+	for nbFinished < 4 {
+		select {
+		case <-finished:
+			nbFinished++
+			break
+		case parts := <-results:
+			chunks = append(chunks, parts)
 		}
 	}
-
 	return chunks
 }
 
-func getVerticalChunks(board connectfour.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
+func getHorizontalChunks(board connectfour.Board, chunkSize int, results chan []int, finished chan bool) {
+	for y := 0; y < connectfour.BoardHeight; y++ {
+		line := board[y]
+		for x := 0; x < connectfour.BoardWidth-chunkSize+1; x++ {
+			results <- line[x : x+chunkSize]
+		}
+	}
+	finished <- true
+}
 
+func getVerticalChunks(board connectfour.Board, chunkSize int, results chan []int, finished chan bool) {
 	for x := 0; x < connectfour.BoardWidth; x++ {
 		for y := 0; y < connectfour.BoardHeight-chunkSize+1; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[y+z][x]
 			}
-			chunks = append(chunks, part)
+			results <- part
 		}
 	}
 
-	return chunks
+	finished <- true
 }
 
-func getBottomLeftTopRightDiagonalChunks(board connectfour.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
-
+func getBottomLeftTopRightDiagonalChunks(board connectfour.Board, chunkSize int, results chan []int, finished chan bool) {
 	for x := 0; x < connectfour.BoardWidth-chunkSize+1; x++ {
 		for y := chunkSize - 1; y < connectfour.BoardHeight; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[y-z][x+z]
 			}
-			chunks = append(chunks, part)
+			results <- part
 		}
 	}
 
-	return chunks
+	finished <- true
 }
 
-func getTopLeftBottomRightDiagonalChunks(board connectfour.Board, chunkSize int) [][]int {
-	chunks := [][]int{}
-
+func getTopLeftBottomRightDiagonalChunks(board connectfour.Board, chunkSize int, results chan []int, finished chan bool) {
 	for x := chunkSize - 1; x < connectfour.BoardWidth; x++ {
 		for y := chunkSize - 1; y < connectfour.BoardHeight; y++ {
 			part := make([]int, chunkSize)
 			for z := 0; z < chunkSize; z++ {
 				part[z] = board[y-z][x-z]
 			}
-			chunks = append(chunks, part)
+			results <- part
 		}
 	}
 
-	return chunks
+	finished <- true
 }
 
 func getOpponent(currentPlayer int) int {
@@ -134,10 +141,53 @@ func getOpponent(currentPlayer int) int {
 	return 1
 }
 
-func NextBestMove(board connectfour.Board, player int) int {
-	currentPlayer := player
+func NextBestMoveInTime(board connectfour.Board, player int, duration time.Duration) (int, error) {
+	results := make(chan BestMove, 1)
+	timeout := make(chan bool, 1)
+	column := -1
+	var error error
 
+	go func() {
+		time.Sleep(duration)
+		timeout <- true
+	}()
+
+	go NextBestMove(board, player, results)
+
+	finished := false
+
+	for !finished {
+		select {
+		case finished = <-timeout:
+		case result, channelStillOpen := <-results:
+			if !channelStillOpen {
+				finished = true
+				break
+			}
+			column = result.Column
+			if result.Error != nil {
+				error = result.Error
+				break
+			}
+		}
+	}
+
+	if error != nil {
+		return column, error
+	}
+
+	if column == -1 {
+		return column, errors.New("No result found in time")
+	}
+
+	return column, nil
+}
+
+func NextBestMove(board connectfour.Board, player int, results chan BestMove) {
+	currentPlayer := player
+	defer close(results)
 	var scoredBoards [][]ScoredBoard = make([][]ScoredBoard, connectfour.BoardWidth)
+	firstPossibleBoards := 0
 
 	for i := 0; i < connectfour.BoardWidth; i++ {
 		scoredBoards[i] = make([]ScoredBoard, 0)
@@ -147,14 +197,31 @@ func NextBestMove(board connectfour.Board, player int) int {
 			continue
 		}
 
+		if hasWon(nextBoard, player) {
+			results <- BestMove{
+				Column: i,
+				Error:  nil,
+			}
+			return
+		}
+
 		scoredBoard := ScoredBoard{
-			currentBoard:   nextBoard,
-			currentScoring: score(nextBoard, currentPlayer),
+			CurrentBoard:   nextBoard,
+			CurrentScoring: score(nextBoard, currentPlayer),
 		}
 
 		scoredBoards[i] = append(scoredBoards[i], scoredBoard)
+		firstPossibleBoards++
 	}
-	depth := 1
+
+	if firstPossibleBoards == 0 {
+		results <- BestMove{
+			Column: -1,
+			Error:  errors.New("No possible move"),
+		}
+		return
+	}
+
 	var bestColumn int
 	for {
 		bestScore := MinScore
@@ -167,25 +234,21 @@ func NextBestMove(board connectfour.Board, player int) int {
 				bestColumn = i
 			}
 		}
-
-		if depth == 5 {
-			break
+		results <- BestMove{
+			Column: bestColumn,
+			Error:  nil,
 		}
 
 		currentPlayer = getOpponent(currentPlayer)
 
 		scoredBoards = guessNextBoardsAggregated(scoredBoards, currentPlayer, player)
-
-		depth++
 	}
-
-	return bestColumn
 }
 
 func aggregateScoring(scoredBoards []ScoredBoard) int {
 	score := 0
 	for _, scoredBoard := range scoredBoards {
-		score += scoredBoard.currentScoring
+		score += scoredBoard.CurrentScoring
 	}
 	return score
 }
@@ -209,14 +272,14 @@ func guessNextBoards(scoredBoards []ScoredBoard, currentPlayer, scoringPlayer in
 
 	for _, scoredBoard := range scoredBoards {
 		for i := 0; i < connectfour.BoardWidth; i++ {
-			nextBoard, err := scoredBoard.currentBoard.AddDisc(i, currentPlayer)
+			nextBoard, err := scoredBoard.CurrentBoard.AddDisc(i, currentPlayer)
 			if err != nil {
 				continue
 			}
 
 			nextScoredBoard := ScoredBoard{
-				currentBoard:   nextBoard,
-				currentScoring: score(nextBoard, scoringPlayer),
+				CurrentBoard:   nextBoard,
+				CurrentScoring: score(nextBoard, scoringPlayer),
 			}
 
 			nextScoredBoards = append(nextScoredBoards, nextScoredBoard)
