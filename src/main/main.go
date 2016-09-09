@@ -41,6 +41,8 @@ func main() {
 
 		renderGame(game)
 
+		fmt.Println("-------------------------------")
+
 		if game.IsFinished {
 			if game.Winner == connectfour.HumanPlayer {
 				fmt.Println("You won")
