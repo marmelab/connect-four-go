@@ -1,10 +1,11 @@
-.PHONY: install run test benchmark help
+.PHONY: install run run-webserver test benchmark help
 .DEFAULT_GOAL := help
 
 GO_BIN := docker run \
 	--interactive \
 	--rm \
 	--tty \
+	-P \
 	--volume="$(CURDIR):/srv" \
 	marmelab-go
 
@@ -36,10 +37,16 @@ pkg/linux_amd64/connectfour.a: src/connectfour/game.go
 bin/main: src/main/main.go pkg/linux_amd64/connectfour.a pkg/linux_amd64/connectfour/ai.a pkg/linux_amd64/connectfour/renderer.a pkg/linux_amd64/connectfour/parser.a pkg/linux_amd64/connectfour/board.a
 	$(GO_BIN) bash -c "cd src/main && go install"
 
+bin/webserver: src/webserver/main.go pkg/linux_amd64/connectfour.a pkg/linux_amd64/connectfour/ai.a pkg/linux_amd64/connectfour/renderer.a pkg/linux_amd64/connectfour/parser.a pkg/linux_amd64/connectfour/board.a
+	$(GO_BIN) bash -c "cd src/webserver && go install"
+
 # Development ==================================================================
 
 run: bin/main
 	$(GO_BIN) bin/main -file=${FILE}
+
+run-webserver:
+	$(GO_BIN) go run src/main/webserver.go
 
 # Tests ========================================================================
 
