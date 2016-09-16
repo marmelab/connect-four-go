@@ -33,7 +33,7 @@ func main() {
 			}
 		} else {
 			fmt.Println("\x1b[38;5;226m● \x1b[0mComputer turn to play")
-			column, err := game.ComputerPlay()
+			column, err := game.ComputerPlay(connectfour.AIPlayer)
 			if err != nil {
 				fmt.Println(err)
 				continue

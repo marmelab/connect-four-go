@@ -38,12 +38,12 @@ func (game *Game) HumanPlay(column int) (int, error) {
 	return column, err
 }
 
-func (game *Game) ComputerPlay() (int, error) {
-	column, err := ai.NextBestMoveInTime(game.Board, AIPlayer, time.Second)
+func (game *Game) ComputerPlay(aiPlayer int) (int, error) {
+	column, err := ai.NextBestMoveInTime(game.Board, aiPlayer, time.Second)
 	if err != nil {
 		return column, err
 	}
-	nextBoard, err := game.Board.AddDisc(column, AIPlayer)
+	nextBoard, err := game.Board.AddDisc(column, aiPlayer)
 	if err != nil {
 		return column, err
 	}
