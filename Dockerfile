@@ -15,4 +15,6 @@ ENV GOPATH /srv
 ENV GOROOT /usr/local/src/go
 ENV PATH ${PATH}:${GOROOT}/bin
 
+EXPOSE 8000
+
 WORKDIR /srv/
